@@ -4,7 +4,7 @@ from Main.missile import Missile
 
 
 class Player(pygame.Rect):
-    def __init__(self, rect, speed):
+    def __init__(self, rect, speed, color, controls):
         self.speed = speed
         self.move_dir = Vector(0, 0)
         self.missile_prefab = (10, 30)
@@ -15,9 +15,11 @@ class Player(pygame.Rect):
         self.shot_interval = 200
         self.shot_timer = 0.0
         self.can_shoot = True
+        self.color = color
+        self.controls = controls
 
     def shoot(self):
-        if self.can_shoot:
+        if self.can_shoot and pygame.key.get_pressed()[self.controls[4]]:
             new_missile = Missile(pygame.Rect((self.x + self.width/2, self.y), self.missile_prefab), Vector(0, -1))
             #self.missiles.append(new_missile)
             self.can_shoot = False
@@ -25,7 +27,7 @@ class Player(pygame.Rect):
             return new_missile
         return False
 
-    def update22(self, screen):
+    def update22(self, screen, d_time):
 
         if self.move_dir[0] > 0:
             self.move_dir[0] -= 0.01
@@ -37,13 +39,21 @@ class Player(pygame.Rect):
         elif self.move_dir[1] < 0:
             self.move_dir[1] += 0.01
 
-        if pygame.key.get_pressed()[pygame.K_RIGHT] and self.move_dir[0] < 1:
+        # if pygame.key.get_pressed()[pygame.K_RIGHT] and self.move_dir[0] < 1:
+        #     self.move_dir[0] += 0.05
+        # if pygame.key.get_pressed()[pygame.K_LEFT] and self.move_dir[0] > -1:
+        #     self.move_dir[0] -= 0.05
+        # if pygame.key.get_pressed()[pygame.K_UP] and self.move_dir[1] > -1:
+        #     self.move_dir[1] -= 0.05
+        # if pygame.key.get_pressed()[pygame.K_DOWN] and self.move_dir[1] < 1:
+        #     self.move_dir[1] += 0.05
+        if pygame.key.get_pressed()[self.controls[3]] and self.move_dir[0] < 1:
             self.move_dir[0] += 0.05
-        if pygame.key.get_pressed()[pygame.K_LEFT] and self.move_dir[0] > -1:
+        if pygame.key.get_pressed()[self.controls[2]] and self.move_dir[0] > -1:
             self.move_dir[0] -= 0.05
-        if pygame.key.get_pressed()[pygame.K_UP] and self.move_dir[1] > -1:
+        if pygame.key.get_pressed()[self.controls[0]] and self.move_dir[1] > -1:
             self.move_dir[1] -= 0.05
-        if pygame.key.get_pressed()[pygame.K_DOWN] and self.move_dir[1] < 1:
+        if pygame.key.get_pressed()[self.controls[1]] and self.move_dir[1] < 1:
             self.move_dir[1] += 0.05
 
         if 0 > self.center[0] and self.move_dir[0] < 0:
@@ -56,7 +66,11 @@ class Player(pygame.Rect):
             self.move_dir[1] = 0
 
         self.move_ip(self.move_dir[0]*self.speed, self.move_dir[1]*self.speed)
-        self.missiles = [x for x in self.missiles if x.update(screen)]
+
+        if self.shot_timer >= self.shot_interval:
+            self.can_shoot = True
+        else:
+            self.shot_timer += d_time
 
     def update2(self, mouse_pos, d_time, screen):
         self.move_dir.v = [mouse_pos[i] - self.center[i] for i in range(2)]
@@ -83,3 +97,6 @@ class Player(pygame.Rect):
     def update(self, mouse_pos):
         self.x = mouse_pos[0] - self.width / 2
         self.y = mouse_pos[1] - self.height / 2
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, self.color, self)
