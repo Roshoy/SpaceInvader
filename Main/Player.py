@@ -19,9 +19,11 @@ class Player(pygame.Rect):
     def shoot(self):
         if self.can_shoot:
             new_missile = Missile(pygame.Rect((self.x + self.width/2, self.y), self.missile_prefab), Vector(0, -1))
-            self.missiles.append(new_missile)
+            #self.missiles.append(new_missile)
             self.can_shoot = False
             self.shot_timer = 0
+            return new_missile
+        return False
 
     def update22(self, screen):
 
@@ -62,8 +64,8 @@ class Player(pygame.Rect):
         if vel_magni < self.precision:
             self.x = mouse_pos[0] - self.width/2
             self.y = mouse_pos[1] - self.height/2
-            self.move_dir = Vector(0,0)
-            self.velocity = Vector(0,0)
+            self.move_dir = Vector(0, 0)
+            self.velocity = Vector(0, 0)
         else:
             self.move_dir = self.move_dir / vel_magni
             self.velocity = self.velocity + self.move_dir * self.speed * 2.0
@@ -76,7 +78,7 @@ class Player(pygame.Rect):
             self.can_shoot = True
         else:
             self.shot_timer += d_time
-        self.missiles = [x for x in self.missiles if x.update(screen)]
+        #self.missiles = [x for x in self.missiles if x.update(screen)]
 
     def update(self, mouse_pos):
         self.x = mouse_pos[0] - self.width / 2

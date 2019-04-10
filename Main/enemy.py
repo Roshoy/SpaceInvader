@@ -18,7 +18,8 @@ class Enemy(pygame.Rect):
 
     def shoot(self):
         new_missile = Missile(pygame.Rect(self.center, self.missile_prefab), self.velocity.normalized())
-        self.missiles.append(new_missile)
+        #self.missiles.append(new_missile)
+        return new_missile
 
     def update(self, player_pos, d_time, screen):
         self.move_dir.v = [player_pos[i] - self.center[i] for i in range(len(player_pos))]
@@ -32,11 +33,12 @@ class Enemy(pygame.Rect):
         self.x += self.velocity[0]
         self.y += self.velocity[1]
         if self.shot_timer >= self.shot_interval:
-            self.shoot()
             self.shot_timer = 0
+            return self.shoot()
         else:
             self.shot_timer += d_time
-        self.missiles = [x for x in self.missiles if x.update(screen)]
+        return False
+        #self.missiles = [x for x in self.missiles if x.update(screen)]
 
     def draw(self, screen):
         pygame.draw.rect(screen, (255, 0, 0), self)
