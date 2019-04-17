@@ -19,5 +19,5 @@ You are controling spaceship, you need too defend yourself from enemies, prefera
 5. Textures
 6. More enemies (maybe bosses)
 ## Used libraries
-1. pypgame
+1. pygame
 2. opencv
