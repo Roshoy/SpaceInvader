@@ -11,7 +11,7 @@ You are controling spaceship, you need too defend yourself from enemies, prefera
 6. Collision detection between ships and missiles
 7. Simple background animation of stars
 8. Multiplayer on keyboard
-##TO DO
+## TO DO
 1. Counting points
 2. Player lives/ships (haw many times you can die before loosing)
 3. Menu
