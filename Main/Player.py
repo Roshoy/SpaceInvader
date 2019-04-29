@@ -20,12 +20,11 @@ class Player(pygame.Rect):
         self.controls = controls
 
     def shoot_trigger(self):
-        if pygame.key.get_pressed()[self.controls[4]]:
+        if  self.controls[4] != -1 and pygame.key.get_pressed()[self.controls[4]]:
             return True
-        elif pygame.mouse.get_pressed()[0]:
+        elif self.controls[4] == -1 and pygame.mouse.get_pressed()[0]:
             return True
         return False
-
 
     def shoot(self):
         if self.can_shoot and self.shoot_trigger():

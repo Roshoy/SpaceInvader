@@ -21,6 +21,9 @@ class Engine:
 
     def run_single(self):
         player1 = self.player_prefab()
+        buff = list(player1.controls)
+        buff[4] = -1
+        player1.controls = tuple(buff)
         enemies = [self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30))]
         timer = 0
 
