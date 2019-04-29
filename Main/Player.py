@@ -19,8 +19,16 @@ class Player(pygame.Rect):
         self.color = color
         self.controls = controls
 
+    def shoot_trigger(self):
+        if pygame.key.get_pressed()[self.controls[4]]:
+            return True
+        elif pygame.mouse.get_pressed()[0]:
+            return True
+        return False
+
+
     def shoot(self):
-        if self.can_shoot and pygame.key.get_pressed()[self.controls[4]]:
+        if self.can_shoot and self.shoot_trigger():
             new_missile = Missile(pygame.Rect((self.x + self.width/2, self.y), self.missile_prefab), Vector(0, -1))
             self.can_shoot = False
             self.shot_timer = 0
