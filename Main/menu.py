@@ -2,13 +2,15 @@ import sys
 import pygame
 from Main.button import Button
 from Main.star import Star
+from Main.Engine import Engine
 
 
 class Menu:
     buttons = []
 
     def __init__(self, screen, title):
-        self.buttons.append(Button(pygame.Rect(350, 200, 200, 100), "Some text"))
+        self.buttons.append(Button(pygame.Rect(400, 200, 200, 100), "Single player mode"))
+        self.buttons.append(Button(pygame.Rect(200, 200, 200, 100), "Multiplayer mode"))
         self.screen = screen
         self.stars = [Star(screen) for x in range(200)]
         self.menu_font = pygame.font.SysFont(None, 40)
@@ -36,6 +38,14 @@ class Menu:
             for b in self.buttons:
                 if b.collidepoint(pygame.mouse.get_pos()):
                     b.highlight()
+                    (b1, b2, b3) = pygame.mouse.get_pressed()
+                    if b1 | b2 | b3:
+                        #screen = pygame.display.set_mode((800, 600))
+                        engine = Engine(self.screen)
+                        if b.text == "Single player mode":
+                            engine.run_single()
+                        else:
+                            engine.run_multi()
                 else:
                     b.unhighlight()
                 b.draw(self.screen)
