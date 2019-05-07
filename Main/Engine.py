@@ -14,7 +14,7 @@ class Engine:
         self.stars = [Star(screen) for x in range(200)]
 
     def player_prefab(self):
-        return Player(pygame.Rect(0, 0, 30, 30), 9, (0, 255, 0))
+        return Player(pygame.Rect(0, 0, 50, 50), 9, (0, 255, 0))
 
     def enemy_prefab(self, pos):
         return Enemy(pygame.Rect(pos[0], pos[1], 30, 30))

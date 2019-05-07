@@ -18,6 +18,8 @@ class Player(pygame.Rect):
         self.can_shoot = True
         self.color = color
         self.controls = controls
+        self.texture = pygame.image.load("../Textures/player_idle.png")
+        self.texture = pygame.transform.scale(self.texture, self.size)
 
     def shoot_trigger(self):
         if  self.controls[4] != -1 and pygame.key.get_pressed()[self.controls[4]]:
@@ -97,4 +99,5 @@ class Player(pygame.Rect):
             self.shot_timer += d_time
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self)
+        screen.blit(self.texture, (self.left, self.top))
+        #pygame.draw.rect(screen, self.color, self)
