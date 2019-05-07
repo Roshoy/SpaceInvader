@@ -5,7 +5,7 @@ pygame.init()
 screen = pygame.display.set_mode((800, 600))
 
 menu = Menu(screen, "Main menu")
-menu.run()
+#menu.run()
 
-#engine = Engine(screen)
-#engine.run_single()
+engine = Engine(screen)
+engine.run_single()
