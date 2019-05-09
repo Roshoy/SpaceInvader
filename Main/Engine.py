@@ -14,7 +14,7 @@ class Engine:
         self.stars = [Star(screen) for x in range(200)]
 
     def player_prefab(self):
-        return Player(pygame.Rect(0, 0, 50, 50), 9, (0, 255, 0))
+        return Player(pygame.Rect(0, 0, 50, 50), 9)
 
     def enemy_prefab(self, pos):
         return Enemy(pygame.Rect(pos[0], pos[1], 30, 30))
@@ -44,7 +44,8 @@ class Engine:
                     sys.exit(0)
 
             self.screen.fill((0, 0, 0))
-            missile_wrapper.add_from_player(player1.shoot())
+            if player1.shoot_trigger():
+                missile_wrapper.add_from_player(player1.shoot())
             player1.update_mouse(pygame.mouse.get_pos(), d_time)
             for s in self.stars:
                 s.update(self.screen)
@@ -53,7 +54,8 @@ class Engine:
             missile_wrapper.update(self.screen)
 
             for e in enemies:
-                missile_wrapper.add_from_enemy(e.update(player1.center, d_time))
+                e.update(player1.center, d_time)
+                missile_wrapper.add_from_enemy(e.shoot())
                 e.draw(self.screen)
 
             enemies = [e for e in enemies if not missile_wrapper.enemy_hit(e)]
@@ -88,8 +90,10 @@ class Engine:
                     sys.exit(0)
 
             self.screen.fill((0, 0, 0))
-            missile_wrapper.add_from_player(player1.shoot())
-            missile_wrapper.add_from_player(player2.shoot())
+            if player1.shoot_trigger():
+                missile_wrapper.add_from_player(player1.shoot())
+            if player2.shoot_trigger():
+                missile_wrapper.add_from_player(player2.shoot())
             player1.update_keyboard(d_time, self.screen)
             player2.update_keyboard(d_time, self.screen)
             for s in self.stars:
@@ -102,9 +106,10 @@ class Engine:
                 dp1 = Vector(player1.center[0] - e.center[0], player1.center[1] - e.center[1])
                 dp2 = Vector(player2.center[0] - e.center[0], player2.center[1] - e.center[1])
                 if dp1.magnitude() > dp2.magnitude():
-                    missile_wrapper.add_from_enemy(e.update(player2.center, d_time))
+                    e.update(player2.center, d_time)
                 else:
-                    missile_wrapper.add_from_enemy(e.update(player1.center, d_time))
+                    e.update(player1.center, d_time)
+                missile_wrapper.add_from_enemy(e.shoot())
                 e.draw(self.screen)
 
             enemies = [e for e in enemies if not missile_wrapper.enemy_hit(e)]
