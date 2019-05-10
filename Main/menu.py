@@ -3,7 +3,7 @@ import pygame
 from Main.button import Button
 from Main.star import Star
 from Main.Engine import Engine
-
+from Main.animation import Animation
 
 class Menu:
     buttons = []
@@ -49,4 +49,5 @@ class Menu:
                 else:
                     b.unhighlight()
                 b.draw(self.screen)
+
             pygame.display.flip()

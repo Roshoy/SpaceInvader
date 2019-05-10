@@ -2,11 +2,20 @@ import pygame
 from Main.vector import Vector
 from Main.missile import Missile
 from Main.spaceship import SpaceShip
+from Main.animation import Animation
+from enum import Enum
 
 
 class Player(SpaceShip):
+
+    class State(Enum):
+        FORWARD = 0
+        LEFT = 1
+        RIGHT = 2
+        EXPLODING = 3
+        DEAD = 4
+
     shot_interval = 200
-    texture = pygame.image.load("../Textures/player_idle.png")
     tag = "player"
     missile_size = (10, 30)
 
@@ -17,7 +26,19 @@ class Player(SpaceShip):
         self.velocity = Vector(0, 0)
         self.precision = 5
         self.controls = controls
-        self.texture = pygame.transform.scale(self.texture, self.size)
+        self.forward_anim = Animation((self.size[0], self.size[1]*39/24))
+        self.forward_anim.add_frames("player_forward", 1)
+        self.left_anim = Animation((self.size[0], self.size[1]*39/24), 60)
+        self.left_anim.add_frames("player_left", 2)
+        self.right_anim = Animation((self.size[0], self.size[1]*39/24), 60)
+        self.right_anim.add_frames("player_right", 2)
+        self.explosion_anim = Animation(self.size)
+        self.explosion_anim.add_frames("explosion", 5)
+        self.state = Player.State.FORWARD
+        self.animation = self.forward_anim
+        self.thruster_anim = Animation((1, 1))
+
+
 
     def missile_prefab(self):
         return Missile(pygame.Rect(self.center, self.missile_size), Vector(0, -1),
@@ -29,6 +50,17 @@ class Player(SpaceShip):
         elif self.controls[4] == -1 and pygame.mouse.get_pressed()[0]:
             return True
         return False
+
+    def set_state(self, new_state):
+        self.state = new_state
+        if self.state is self.State.FORWARD:
+            self.animation = self.forward_anim
+        elif self.state is self.State.EXPLODING:
+            self.animation = self.explosion_anim
+        elif self.state is self.State.LEFT:
+            self.animation = self.left_anim
+        elif self.state is self.State.RIGHT:
+            self.animation = self.right_anim
 
     def move_keyboard(self, screen):
         if self.move_dir[0] > 0:
@@ -65,6 +97,7 @@ class Player(SpaceShip):
         self.move_dir.v = [mouse_pos[i] - self.center[i] for i in range(2)]
         vel_magni = self.move_dir.magnitude()
         if vel_magni < self.precision:
+            self.set_state(Player.State.FORWARD)
             self.velocity[0] = mouse_pos[0] - self.center[0]
             self.velocity[1] = mouse_pos[1] - self.center[1]
         else:
@@ -73,10 +106,33 @@ class Player(SpaceShip):
             if self.velocity.magnitude() != 0:
                 self.velocity = self.velocity.normalized() * self.speed
 
+    def update(self, d_time):
+        if abs(self.velocity[0]) > abs(self.velocity[1]):
+            if self.velocity[0] < 0:
+                self.set_state(Player.State.LEFT)
+            else:
+                self.set_state(Player.State.RIGHT)
+
+        if self.state is Player.State.FORWARD:
+            super().update(d_time)
+            self.animation.animate_circular()
+        elif self.state is Player.State.LEFT or self.state is Player.State.RIGHT:
+            super().update(d_time)
+            self.animation.animate_serial()
+        elif self.state is Player.State.EXPLODING:
+            self.animation.animate_serial()
+        self.thruster_anim.animate_circular()
+
     def update_keyboard(self, d_time, screen):
+        # self.animation.animate_circular();
+        self.update(d_time)
         self.move_keyboard(screen)
-        super().update(d_time)
 
     def update_mouse(self, mouse_pos, d_time):
+        self.update(d_time)
         self.move_mouse(mouse_pos)
-        super().update(d_time)
+
+    def draw(self, screen):
+        self.animation.draw(screen, (self.center[0], self.center[1] + self.size[1] * 15/24))
+        #self.thruster_anim.draw(screen, (self.center[0],
+        #    self.top+self.size[1] + self.thruster_anim.size[1]/2 ))

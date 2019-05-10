@@ -14,7 +14,10 @@ class Engine:
         self.stars = [Star(screen) for x in range(200)]
 
     def player_prefab(self):
-        return Player(pygame.Rect(0, 0, 50, 50), 9)
+        new_player = Player(pygame.Rect(0, 0, 50, 50), 9)
+        new_player.thruster_anim.size = (30, 50)
+        new_player.thruster_anim.add_frames("thruster", 2)
+        return new_player
 
     def enemy_prefab(self, pos):
         return Enemy(pygame.Rect(pos[0], pos[1], 30, 30))
@@ -34,6 +37,7 @@ class Engine:
             if len(enemies) < 8:
                 timer += d_time
                 if timer > 1500:
+                    enemies.append(self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30)))
                     enemies.append(self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30)))
                     timer = 0
 
@@ -58,7 +62,11 @@ class Engine:
                 missile_wrapper.add_from_enemy(e.shoot())
                 e.draw(self.screen)
 
-            enemies = [e for e in enemies if not missile_wrapper.enemy_hit(e)]
+            for e in enemies:
+                if e.state is Enemy.State.ALIVE and missile_wrapper.enemy_hit(e):
+                    e.set_state(Enemy.State.EXPLODING)
+
+            enemies = [e for e in enemies if e.state is not Enemy.State.DEAD]
             missile_wrapper.player_hit(player1)
             missile_wrapper.draw(self.screen)
             player1.draw(self.screen)

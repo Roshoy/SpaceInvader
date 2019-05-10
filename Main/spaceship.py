@@ -2,7 +2,7 @@ from Main.vector import Vector
 import pygame
 import random
 from Main.missile import Missile
-
+from Main.animation import Animation
 
 class SpaceShip(pygame.Rect):
     tag = ""
@@ -17,6 +17,7 @@ class SpaceShip(pygame.Rect):
         self.speed = speed
         self.shot_timer = 0
         self.can_shoot = False
+        self.animation = Animation((self.width, self.height))
     #   textures
 
     def missile_prefab(self):
@@ -38,5 +39,4 @@ class SpaceShip(pygame.Rect):
             self.shot_timer += d_time
 
     def draw(self, screen):
-        #pygame.draw.rect(screen, (255, 0, 0), self)
-        screen.blit(self.texture, (self.left, self.top))
+        self.animation.draw(screen, self.center)
