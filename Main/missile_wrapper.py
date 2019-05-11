@@ -8,6 +8,8 @@ class MissileWrapper:
         self.enemy_missiles = []
         self.player_missiles = []
         self.hits = 0
+        self.enemy_missiles_texture = pygame.image.load("../Textures/enemy_missile.png")
+        self.player_missiles_texture = pygame.image.load("../Textures/player_missile.png")
 
     def player_hit(self, player: Player):
         for m in self.enemy_missiles:
@@ -43,9 +45,9 @@ class MissileWrapper:
             m.draw(screen)
 
     def add_from_enemy(self, enemy_shot):
-        if enemy_shot != False:
+        if enemy_shot:
             self.enemy_missiles.append(enemy_shot)
 
     def add_from_player(self, player_shot):
-        if player_shot != False:
+        if player_shot:
             self.player_missiles.append(player_shot)
