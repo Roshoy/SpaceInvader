@@ -17,7 +17,7 @@ class Player(SpaceShip):
 
     shot_interval = 200
     tag = "player"
-    missile_size = (10, 30)
+    missile_size = (8, 24)
 
     def __init__(self, rect, speed, controls=
                  (pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_RETURN)):
@@ -26,19 +26,16 @@ class Player(SpaceShip):
         self.velocity = Vector(0, 0)
         self.precision = 5
         self.controls = controls
-        self.forward_anim = Animation((self.size[0], self.size[1]*39/24))
-        self.forward_anim.add_frames("player_forward", 1)
-        self.left_anim = Animation((self.size[0], self.size[1]*39/24), 60)
-        self.left_anim.add_frames("player_left", 2)
-        self.right_anim = Animation((self.size[0], self.size[1]*39/24), 60)
-        self.right_anim.add_frames("player_right", 2)
-        self.explosion_anim = Animation(self.size)
+        self.forward_anim = Animation((self.size[0], self.size[1]*3/2))
+        self.forward_anim.add_frames("player_forward", 2)
+        self.left_anim = Animation((self.size[0], self.size[1]*3/2), 5)
+        self.left_anim.add_frames("player_left", 4)
+        self.right_anim = Animation((self.size[0], self.size[1]*3/2), 5)
+        self.right_anim.add_frames("player_right", 4)
+        self.explosion_anim = Animation((self.size[0], self.size[1]*3/2), 5)
         self.explosion_anim.add_frames("explosion", 5)
         self.state = Player.State.FORWARD
         self.animation = self.forward_anim
-        self.thruster_anim = Animation((1, 1))
-
-
 
     def missile_prefab(self):
         return Missile(pygame.Rect(self.center, self.missile_size), Vector(0, -1),
@@ -121,7 +118,6 @@ class Player(SpaceShip):
             self.animation.animate_serial()
         elif self.state is Player.State.EXPLODING:
             self.animation.animate_serial()
-        self.thruster_anim.animate_circular()
 
     def update_keyboard(self, d_time, screen):
         # self.animation.animate_circular();
@@ -133,6 +129,6 @@ class Player(SpaceShip):
         self.move_mouse(mouse_pos)
 
     def draw(self, screen):
-        self.animation.draw(screen, (self.center[0], self.center[1] + self.size[1] * 15/24))
+        self.animation.draw(screen, (self.center[0], self.top + self.size[1] * 3/4))
         #self.thruster_anim.draw(screen, (self.center[0],
         #    self.top+self.size[1] + self.thruster_anim.size[1]/2 ))

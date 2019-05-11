@@ -14,10 +14,7 @@ class Engine:
         self.stars = [Star(screen) for x in range(200)]
 
     def player_prefab(self):
-        new_player = Player(pygame.Rect(0, 0, 50, 50), 9)
-        new_player.thruster_anim.size = (30, 50)
-        new_player.thruster_anim.add_frames("thruster", 2)
-        return new_player
+        return Player(pygame.Rect(0, 0, 40, 40), 9)
 
     def enemy_prefab(self, pos):
         return Enemy(pygame.Rect(pos[0], pos[1], 30, 30))

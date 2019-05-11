@@ -6,6 +6,7 @@ from Main.spaceship import SpaceShip
 from enum import Enum
 from Main.animation import Animation
 
+
 class Enemy(SpaceShip):
 
     class State(Enum):
@@ -19,7 +20,7 @@ class Enemy(SpaceShip):
     def __init__(self, rect, speed=5):
         super().__init__(rect, speed)
         self.restraining = random.randrange(100, 200, 1)
-        self.explosion_anim = Animation(tuple([int(i*1.5) for i in self.size]))
+        self.explosion_anim = Animation(tuple([int(i*1.5) for i in self.size]), 3)
         self.explosion_anim.add_frames("explosion", 5)
         self.fly_anim = Animation(self.size)
         self.fly_anim.add_frames(self.tag, 1)
