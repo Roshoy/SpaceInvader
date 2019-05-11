@@ -2,7 +2,7 @@ import pygame
 from Main.Engine import Engine
 from Main.menu import Menu
 pygame.init()
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
 # comment
 
 menu = Menu(screen, "Space Invaders Deluxe")

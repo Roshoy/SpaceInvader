@@ -19,9 +19,9 @@ class Menu:
                                 100 - self.menu_title.get_size()[1] / 2)
 
     def run(self):
-
+        clock = pygame.time.Clock()
         while True:
-            pygame.time.Clock().tick(60)
+            clock.tick(60)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit(0)

@@ -20,4 +20,5 @@ class Star:
         self.rect.y = random.randrange(-30, 0, 1)
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.color, self)
+        if self.rect.bottom >= 0:
+            pygame.draw.rect(screen, self.color, self)

@@ -11,7 +11,7 @@ from Main.missile_wrapper import MissileWrapper
 class Engine:
     def __init__(self, screen):
         self.screen = screen
-        self.stars = [Star(screen) for x in range(200)]
+        self.stars = [Star(screen) for x in range(400)]
 
     def player_prefab(self):
         return Player(pygame.Rect(0, 0, 40, 40), 9)
@@ -25,18 +25,20 @@ class Engine:
         buff[4] = -1
         player1.controls = tuple(buff)
         enemies = [self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30))]
-        timer = 0
+        enemy_spawn_timer = 0
 
         missile_wrapper = MissileWrapper()
-
+        pygame.mouse.set_visible(False)
+        clock = pygame.time.Clock()
         while True:
-            d_time = pygame.time.Clock().tick(60)
+            print(clock.get_fps())
+            d_time = clock.tick(60)
             if len(enemies) < 8:
-                timer += d_time
-                if timer > 1500:
+                enemy_spawn_timer += d_time
+                if enemy_spawn_timer > 1500:
                     enemies.append(self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30)))
                     enemies.append(self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30)))
-                    timer = 0
+                    enemy_spawn_timer = 0
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -70,6 +72,8 @@ class Engine:
 
             pygame.display.flip()
 
+        pygame.mouse.set_visible(True)
+
     def run_multi(self):
         player1 = self.player_prefab()
         player2 = self.player_prefab()
@@ -79,9 +83,9 @@ class Engine:
         timer = 0
 
         missile_wrapper = MissileWrapper()
-
+        clock = pygame.time.Clock()
         while True:
-            d_time = pygame.time.Clock().tick(60)
+            d_time = clock.tick(60)
             if len(enemies) < 8:
                 timer += d_time
                 if timer > 1500:
