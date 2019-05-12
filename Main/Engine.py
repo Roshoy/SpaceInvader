@@ -11,7 +11,7 @@ from Main.missile_wrapper import MissileWrapper
 class Engine:
     def __init__(self, screen):
         self.screen = screen
-        self.stars = [Star(screen) for x in range(400)]
+        self.stars = [Star(screen) for x in range(300)]
 
     def player_prefab(self):
         return Player(pygame.Rect(0, 0, 40, 40), 9)
@@ -31,7 +31,6 @@ class Engine:
         pygame.mouse.set_visible(False)
         clock = pygame.time.Clock()
         while True:
-            print(clock.get_fps())
             d_time = clock.tick(60)
             if len(enemies) < 8:
                 enemy_spawn_timer += d_time
@@ -65,6 +64,11 @@ class Engine:
                 if e.state is Enemy.State.ALIVE and missile_wrapper.enemy_hit(e):
                     e.set_state(Enemy.State.EXPLODING)
 
+            # for rocket explosions
+            for e in enemies:
+                if e.state is Enemy.State.ALIVE and missile_wrapper.enemy_hit(e):
+                    e.set_state(Enemy.State.EXPLODING)
+
             enemies = [e for e in enemies if e.state is not Enemy.State.DEAD]
             missile_wrapper.player_hit(player1)
             missile_wrapper.draw(self.screen)
@@ -77,7 +81,7 @@ class Engine:
     def run_multi(self):
         player1 = self.player_prefab()
         player2 = self.player_prefab()
-        player2.controls = (pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d, pygame.K_TAB)
+        player2.controls = (pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d, pygame.K_TAB, pygame.K_CAPSLOCK)
         player2.color = (0, 155, 155)
         enemies = [self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30))]
         timer = 0

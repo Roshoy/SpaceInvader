@@ -10,6 +10,10 @@ class Animation:
         self.frames = []
 
     def add_frames(self, path: str, count: int):
+        if count == 1:
+            self.frames.append(pygame.transform.scale(
+                pygame.image.load("../Textures/" + path + ".png"), self.size))
+            return
         for i in range(count):
             self.frames.append(pygame.transform.scale(
                 pygame.image.load("../Textures/" + path + "_" + str(i+1) + ".png"), self.size))
