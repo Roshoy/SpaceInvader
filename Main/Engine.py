@@ -5,13 +5,21 @@ from Main.vector import Vector
 from Main.Player import Player
 from Main.enemy import Enemy
 from Main.star import Star
+from Main.rocket import Rocket
 from Main.missile_wrapper import MissileWrapper
+
+from Main.simple_missiles import *
 
 
 class Engine:
     def __init__(self, screen):
         self.screen = screen
         self.stars = [Star(screen) for x in range(300)]
+        EnemyMissile.init()
+        PlayerMissile.init()
+        Rocket.init()
+        Enemy.init()
+        Player.init()
 
     def player_prefab(self):
         return Player(pygame.Rect(0, 0, 40, 40), 9)
@@ -24,20 +32,15 @@ class Engine:
         buff = list(player1.controls)
         buff[4] = -1
         player1.controls = tuple(buff)
-        enemies = [self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30))]
+        enemies = pygame.sprite.Group(self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30)))
+        #[self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30))]
         enemy_spawn_timer = 0
-
+        player = pygame.sprite.GroupSingle(player1)
         missile_wrapper = MissileWrapper()
-        pygame.mouse.set_visible(False)
+        #pygame.mouse.set_visible(False)
         clock = pygame.time.Clock()
         while True:
             d_time = clock.tick(60)
-            if len(enemies) < 8:
-                enemy_spawn_timer += d_time
-                if enemy_spawn_timer > 1500:
-                    enemies.append(self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30)))
-                    enemies.append(self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30)))
-                    enemy_spawn_timer = 0
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -45,7 +48,15 @@ class Engine:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     sys.exit(0)
 
+            if len(enemies.sprites()) < 8:
+                enemy_spawn_timer += d_time
+                if enemy_spawn_timer > 1500:
+                    enemies.add(self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30)))
+                    enemies.add(self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30)))
+                    enemy_spawn_timer = 0
+
             self.screen.fill((0, 0, 0))
+
             if player1.shoot_trigger():
                 missile_wrapper.add_from_player(player1.shoot())
             player1.update_mouse(pygame.mouse.get_pos(), d_time)
@@ -55,28 +66,31 @@ class Engine:
 
             missile_wrapper.update(self.screen)
 
-            for e in enemies:
-                e.update(player1.center, d_time)
+            enemies.update(player1.rect.center, d_time)
+            enemies.draw(self.screen)
+
+            for e in enemies.sprites():
                 missile_wrapper.add_from_enemy(e.shoot())
-                e.draw(self.screen)
 
             for e in enemies:
-                if e.state is Enemy.State.ALIVE and missile_wrapper.enemy_hit(e):
-                    e.set_state(Enemy.State.EXPLODING)
+                missile_wrapper.enemy_aoe_hit(e)
 
             # for rocket explosions
             for e in enemies:
-                if e.state is Enemy.State.ALIVE and missile_wrapper.enemy_hit(e):
-                    e.set_state(Enemy.State.EXPLODING)
+                if e.state is Enemy.State.ALIVE:
+                    missile_wrapper.enemy_hit(e)
+                    #e.set_state(Enemy.State.EXPLODING)
 
-            enemies = [e for e in enemies if e.state is not Enemy.State.DEAD]
+            if player1.state is Player.State.DEAD:
+                return
+
+            [enemies.remove(e) for e in enemies.sprites() if e.state is Enemy.State.DEAD]
             missile_wrapper.player_hit(player1)
             missile_wrapper.draw(self.screen)
-            player1.draw(self.screen)
+            player.draw(self.screen)
 
             pygame.display.flip()
-
-        pygame.mouse.set_visible(True)
+        #pygame.mouse.set_visible(True)
 
     def run_multi(self):
         player1 = self.player_prefab()

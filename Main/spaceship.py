@@ -3,26 +3,40 @@ import pygame
 import random
 from Main.missile import Missile
 from Main.animation import Animation
+from enum import Enum
 
-class SpaceShip(pygame.Rect):
+
+class SpaceShip(pygame.sprite.Sprite, Animation):
     tag = ""
     shot_interval = 500
     missile_size = (1, 1)
     texture = None
+    max_life = 1
+
+    class State(Enum):
+        ALIVE = 0
+        EXPLODING = 1
+        DEAD = 2
 
     def __init__(self, rect, speed):
-        super().__init__(rect)
+        pygame.sprite.Sprite.__init__(self)
+        Animation.__init__(self)
+        self.rect = rect
         self.move_dir = Vector(0, 1)
         self.velocity = self.move_dir * speed
         self.speed = speed
         self.shot_timer = 0
         self.can_shoot = False
-        self.animation = Animation((self.width, self.height))
+        self.life = self.max_life
+
+    #    self.state = self.State.ALIVE
     #   textures
 
     def missile_prefab(self):
-        return Missile(pygame.Rect(self.center, self.missile_size), self.velocity.normalized(),
-                       self.tag)
+        return Missile(pygame.Rect(self.rect.center, self.missile_size), self.velocity.normalized())
+
+    def set_state(self, state):
+        pass
 
     def shoot(self):
         if self.can_shoot:
@@ -31,12 +45,15 @@ class SpaceShip(pygame.Rect):
             return self.missile_prefab()
         return False
 
+    def get_hit(self, missile: Missile):
+        self.life -= missile.damage
+        if self.life <= 0:
+            self.set_state(self.State.EXPLODING)
+
     def update(self, d_time):
-        self.move_ip(self.velocity[0], self.velocity[1])
+        self.rect.move_ip(self.velocity[0], self.velocity[1])
         if self.shot_timer >= self.shot_interval:
             self.can_shoot = True
         else:
             self.shot_timer += d_time
 
-    def draw(self, screen):
-        self.animation.draw(screen, self.center)
