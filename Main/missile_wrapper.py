@@ -13,7 +13,7 @@ class MissileWrapper:
         self.player_rockets = pygame.sprite.Group()
 
     def player_hit(self, player: Player):
-        if player is Player.State.EXPLODING or player is Player.State.DEAD:
+        if player.state is Player.State.EXPLODING or player.state is Player.State.DEAD:
             return
         for m in pygame.sprite.spritecollide(player, self.enemy_missiles, False):
             if m.state is Missile.State.ALIVE:

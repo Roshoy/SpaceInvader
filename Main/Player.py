@@ -67,6 +67,7 @@ class Player(SpaceShip):
         return False
 
     def set_state(self, new_state):
+        print(new_state)
         self.state = new_state
         if self.state is not self.State.DEAD:
             self.set_frame_set(self.state)
@@ -119,6 +120,7 @@ class Player(SpaceShip):
         if self.state is Player.State.EXPLODING:
             if self.animate_serial():
                 self.set_state(self.state.DEAD)
+            return False
         elif abs(self.velocity[0]) > abs(self.velocity[1]):
             if self.velocity[0] < 0 and self.state is not self.State.LEFT:
                 self.set_state(Player.State.TURNLEFT)
@@ -132,14 +134,15 @@ class Player(SpaceShip):
         elif self.state is Player.State.TURNLEFT or self.state is Player.State.TURNRIGHT:
             if self.animate_serial():
                 self.set_state(self.State(self.state.value + 4))
+        return True
 
     def update_keyboard(self, d_time, screen):
         self.update(d_time)
         self.move_keyboard(screen)
 
     def update_mouse(self, mouse_pos, d_time):
-        self.update(d_time)
-        self.move_mouse(mouse_pos)
+        if self.update(d_time):
+            self.move_mouse(mouse_pos)
     #
     # def draw(self, screen):
     #     self.animation.draw(screen, (self.center[0], self.top + self.size[1] * 3/4))
