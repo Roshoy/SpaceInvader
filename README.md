@@ -16,7 +16,6 @@ You are controling spaceship, you need too defend yourself from enemies, prefera
 2. Player lives/ships (haw many times you can die before loosing)
 3. Menu
 4. Camera control
-5. Textures
 6. More enemies (maybe bosses)
 ## Used libraries
 1. pygame
