@@ -7,39 +7,50 @@ from Main.vector import Vector
 
 class MissileWrapper:
     def __init__(self):
-        self.enemy_missiles = []
-        self.player_missiles = []
+        self.enemy_missiles = pygame.sprite.Group()
+        self.player_missiles = pygame.sprite.Group()
         self.hits = 0
-        self.player_rockets = []
+        self.player_rockets = pygame.sprite.Group()
 
     def player_hit(self, player: Player):
-        for m in self.enemy_missiles:
-            if m.colliderect(player) and m.state is Missile.State.ALIVE:
+        if player.state is Player.State.EXPLODING or player.state is Player.State.DEAD:
+            return
+        for m in pygame.sprite.spritecollide(player, self.enemy_missiles, False):
+            if m.state is Missile.State.ALIVE:
+                player.get_hit(m)
                 m.active = False
                 m.set_state(Missile.State.EXPLODING)
                 self.hits += 1
                 print("Trafiony po raz: " + str(self.hits))
-                return True
-        return False
+                print("Zycie: "+str(player.life))
 
     def enemy_hit(self, enemy: Enemy):
-        for m in self.player_missiles:
-            if m.colliderect(enemy) and m.state is Missile.State.ALIVE:
+        for m in pygame.sprite.spritecollide(enemy, self.player_missiles, False):
+            if m.state is Missile.State.ALIVE:
+                enemy.get_hit(m)
                 m.set_state(Missile.State.DEAD)
-                return True
-        for r in self.player_rockets:
-            if r.colliderect(enemy) and r.state is Missile.State.ALIVE:
-                r.set_state(Missile.State.EXPLODING)
-                return True
-            elif Vector(r.center[0] - enemy.center[0], r.center[1] - enemy.center[1]).magnitude() < r.radius and\
-                r.state is Missile.State.EXPLODING and r.active:
+
+        for m in pygame.sprite.spritecollide(enemy, self.player_rockets, False):
+            if m.state is Missile.State.ALIVE:
+                enemy.get_hit(m)
+                m.set_state(Missile.State.EXPLODING)
+
+    def enemy_aoe_hit(self, enemy: Enemy):
+        for r in self.player_rockets.sprites():
+            if r.state is Missile.State.EXPLODING:
+                print("Pos: " + str(r.rect.topleft))
+                print("Cnt: " + str(r.rect.center))
+                print("atv: " + str(r.active))
+            if Vector(r.rect.center[0] - enemy.rect.center[0], r.rect.center[1] - enemy.rect.center[1]).magnitude() <\
+                    r.radius and r.state is Missile.State.EXPLODING and r.active:
+                enemy.get_hit(r)
                 return True
         return False
 
     def clear_inactive(self):
-        self.enemy_missiles = [m for m in self.enemy_missiles if m.state is not Missile.State.DEAD]
-        self.player_missiles = [m for m in self.player_missiles if m.state is not Missile.State.DEAD]
-        self.player_rockets = [m for m in self.player_rockets if m.state is not Missile.State.DEAD]
+        [self.enemy_missiles.remove(m) for m in self.enemy_missiles.sprites() if m.state is Missile.State.DEAD]
+        [self.player_missiles.remove(m) for m in self.player_missiles.sprites() if m.state is Missile.State.DEAD]
+        [self.player_rockets.remove(m) for m in self.player_rockets.sprites() if m.state is Missile.State.DEAD]
 
     def update(self, screen):
         self.clear_inactive()
@@ -51,20 +62,17 @@ class MissileWrapper:
             m.update(screen)
 
     def draw(self, screen):
-        for m in self.enemy_missiles:
-            m.draw(screen)
-        for m in self.player_missiles:
-            m.draw(screen)
-        for m in self.player_rockets:
-            m.draw(screen)
+        self.enemy_missiles.draw(screen)
+        self.player_missiles.draw(screen)
+        self.player_rockets.draw(screen)
 
     def add_from_enemy(self, enemy_shot):
         if enemy_shot:
-            self.enemy_missiles.append(enemy_shot)
+            self.enemy_missiles.add(enemy_shot)
 
     def add_from_player(self, player_shot):
         if player_shot:
             if isinstance(player_shot, Rocket):
-                self.player_rockets.append(player_shot)
+                self.player_rockets.add(player_shot)
             else:
-                self.player_missiles.append(player_shot)
+                self.player_missiles.add(player_shot)

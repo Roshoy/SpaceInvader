@@ -38,6 +38,8 @@ class Vector:
         return nv
 
     def normalized(self):
+        if self.magnitude() == 0:
+            return self
         return self/self.magnitude()
 
     def __add__(self, other):

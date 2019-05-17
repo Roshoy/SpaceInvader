@@ -2,42 +2,45 @@ import sys
 import pygame
 import random
 from Main.vector import Vector
-from Main.Player import Player
+from Main.Player import *
 from Main.enemy import Enemy
 from Main.star import Star
+from Main.rocket import Rocket
 from Main.missile_wrapper import MissileWrapper
+from Main.enemies_wrapper import EnemiesWrapper
+
+from Main.simple_missiles import *
 
 
 class Engine:
     def __init__(self, screen):
         self.screen = screen
         self.stars = [Star(screen) for x in range(300)]
+        EnemyMissile.init()
+        PlayerMissile.init()
+        Rocket.init()
+        Enemy.init()
+        Player.init()
+        SecondPlayer.init()
 
-    def player_prefab(self):
-        return Player(pygame.Rect(0, 0, 40, 40), 9)
-
-    def enemy_prefab(self, pos):
-        return Enemy(pygame.Rect(pos[0], pos[1], 30, 30))
+    def player_prefab(self, type = 1):
+        if type == 1:
+            return Player(pygame.Rect(0, 0, 40, 40), 9)
+        else:
+            return SecondPlayer(pygame.Rect(0, 0, 40, 40), 9)
 
     def run_single(self):
         player1 = self.player_prefab()
         buff = list(player1.controls)
         buff[4] = -1
         player1.controls = tuple(buff)
-        enemies = [self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30))]
-        enemy_spawn_timer = 0
+        enemies_wrapper = EnemiesWrapper(self.screen)
 
+        player = pygame.sprite.Group(player1)
         missile_wrapper = MissileWrapper()
-        pygame.mouse.set_visible(False)
         clock = pygame.time.Clock()
         while True:
             d_time = clock.tick(60)
-            if len(enemies) < 8:
-                enemy_spawn_timer += d_time
-                if enemy_spawn_timer > 1500:
-                    enemies.append(self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30)))
-                    enemies.append(self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30)))
-                    enemy_spawn_timer = 0
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -45,56 +48,41 @@ class Engine:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     sys.exit(0)
 
-            self.screen.fill((0, 0, 0))
             if player1.shoot_trigger():
                 missile_wrapper.add_from_player(player1.shoot())
-            player1.update_mouse(pygame.mouse.get_pos(), d_time)
-            for s in self.stars:
-                s.update(self.screen)
-                s.draw(self.screen)
+            player.update(d_time, True)
 
             missile_wrapper.update(self.screen)
 
-            for e in enemies:
-                e.update(player1.center, d_time)
-                missile_wrapper.add_from_enemy(e.shoot())
-                e.draw(self.screen)
-
-            for e in enemies:
-                if e.state is Enemy.State.ALIVE and missile_wrapper.enemy_hit(e):
-                    e.set_state(Enemy.State.EXPLODING)
-
-            # for rocket explosions
-            for e in enemies:
-                if e.state is Enemy.State.ALIVE and missile_wrapper.enemy_hit(e):
-                    e.set_state(Enemy.State.EXPLODING)
-
-            enemies = [e for e in enemies if e.state is not Enemy.State.DEAD]
+            enemies_wrapper.update(d_time, player, missile_wrapper)
             missile_wrapper.player_hit(player1)
+
+            if player1.state is Player.State.DEAD:
+                return
+
+            self.screen.fill((0, 0, 0))
+            for s in self.stars:
+                s.update(self.screen)
+                s.draw(self.screen)
+            enemies_wrapper.draw(self.screen)
             missile_wrapper.draw(self.screen)
-            player1.draw(self.screen)
+            player.draw(self.screen)
 
             pygame.display.flip()
-
-        pygame.mouse.set_visible(True)
+        #pygame.mouse.set_visible(True)
 
     def run_multi(self):
+
         player1 = self.player_prefab()
-        player2 = self.player_prefab()
-        player2.controls = (pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d, pygame.K_TAB, pygame.K_CAPSLOCK)
-        player2.color = (0, 155, 155)
-        enemies = [self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30))]
-        timer = 0
+        player2 = self.player_prefab(2)
+        players = pygame.sprite.Group(player1, player2)
+
+        enemies_wrapper = EnemiesWrapper(self.screen)
 
         missile_wrapper = MissileWrapper()
         clock = pygame.time.Clock()
         while True:
             d_time = clock.tick(60)
-            if len(enemies) < 8:
-                timer += d_time
-                if timer > 1500:
-                    enemies.append(self.enemy_prefab((random.randrange(0, self.screen.get_width(), 1), -30)))
-                    timer = 0
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -102,35 +90,29 @@ class Engine:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     sys.exit(0)
 
-            self.screen.fill((0, 0, 0))
             if player1.shoot_trigger():
                 missile_wrapper.add_from_player(player1.shoot())
             if player2.shoot_trigger():
                 missile_wrapper.add_from_player(player2.shoot())
-            player1.update_keyboard(d_time, self.screen)
-            player2.update_keyboard(d_time, self.screen)
+            players.update(d_time, False, self.screen)
+
+            missile_wrapper.update(self.screen)
+            enemies_wrapper.update(d_time, players, missile_wrapper)
+
+            missile_wrapper.player_hit(player1)
+            missile_wrapper.player_hit(player2)
+            for p in players.sprites():
+                if p.state is Player.State.DEAD:
+                    players.remove(p)
+                    if len(players.sprites()) == 0:
+                        return
+            self.screen.fill((0, 0, 0))
             for s in self.stars:
                 s.update(self.screen)
                 s.draw(self.screen)
-
-            missile_wrapper.update(self.screen)
-
-            for e in enemies:
-                dp1 = Vector(player1.center[0] - e.center[0], player1.center[1] - e.center[1])
-                dp2 = Vector(player2.center[0] - e.center[0], player2.center[1] - e.center[1])
-                if dp1.magnitude() > dp2.magnitude():
-                    e.update(player2.center, d_time)
-                else:
-                    e.update(player1.center, d_time)
-                missile_wrapper.add_from_enemy(e.shoot())
-                e.draw(self.screen)
-
-            enemies = [e for e in enemies if not missile_wrapper.enemy_hit(e)]
-            missile_wrapper.player_hit(player1)
-            missile_wrapper.player_hit(player2)
+            enemies_wrapper.draw(self.screen)
             missile_wrapper.draw(self.screen)
-            player1.draw(self.screen)
-            player2.draw(self.screen)
+            players.draw(self.screen)
             pygame.display.flip()
 
 
