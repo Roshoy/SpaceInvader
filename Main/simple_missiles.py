@@ -7,8 +7,8 @@ class PlayerMissile(Missile):
     stat_size = (8, 24)
     tag = "player"
 
-    def __init__(self, pos, direction):
-        super().__init__(pygame.Rect(pos, self.stat_size), direction)
+    def __init__(self, pos, player_num, direction):
+        super().__init__(pygame.Rect(pos, self.stat_size), self.tag+str(player_num), direction)
 
 
 class EnemyMissile(Missile):
@@ -16,4 +16,4 @@ class EnemyMissile(Missile):
     tag = "enemy"
 
     def __init__(self, pos, direction):
-        super().__init__(pygame.Rect(pos, self.stat_size), direction)
+        super().__init__(pygame.Rect(pos, self.stat_size), self.tag, direction)

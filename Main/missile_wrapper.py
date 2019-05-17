@@ -37,10 +37,11 @@ class MissileWrapper:
 
     def enemy_aoe_hit(self, enemy: Enemy):
         for r in self.player_rockets.sprites():
-            if r.rect.colliderect(enemy) and r.state is Missile.State.ALIVE:
-                enemy.get_hit(r)
-                r.set_state(Missile.State.EXPLODING)
-            elif Vector(r.rect.center[0] - enemy.rect.center[0], r.rect.center[1] - enemy.rect.center[1]).magnitude() <\
+            if r.state is Missile.State.EXPLODING:
+                print("Pos: " + str(r.rect.topleft))
+                print("Cnt: " + str(r.rect.center))
+                print("atv: " + str(r.active))
+            if Vector(r.rect.center[0] - enemy.rect.center[0], r.rect.center[1] - enemy.rect.center[1]).magnitude() <\
                     r.radius and r.state is Missile.State.EXPLODING and r.active:
                 enemy.get_hit(r)
                 return True

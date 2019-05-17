@@ -13,7 +13,7 @@ class Missile(pygame.sprite.Sprite, Animation):
         EXPLODING = 1
         DEAD = 2
 
-    def __init__(self, rect, direction):
+    def __init__(self, rect, owner, direction):
         pygame.sprite.Sprite.__init__(self)
         Animation.__init__(self)
         rect.left -= self.stat_size[0] / 2
@@ -23,8 +23,8 @@ class Missile(pygame.sprite.Sprite, Animation):
         self.color = (0, 255, 0)
         self.velocity = direction
         self.velocity = self.velocity * self.speed
-
-        self.state = self.State.ALIVE
+        self.owner = owner
+        self.state = None
         self.set_state(self.State.ALIVE)
 
     @classmethod
@@ -37,11 +37,14 @@ class Missile(pygame.sprite.Sprite, Animation):
         cls.add_frames("explosion", 5, cls.State.EXPLODING, tuple([i*1.5 for i in cls.stat_size]))
 
     def set_state(self, new_state):
+        if self.state is new_state:
+            return
         self.state = new_state
         if self.state is not self.State.DEAD:
             self.set_frame_set(self.state)
 
-    def update(self, screen):
+    def update(self, *args):
+
         if self.state is self.State.ALIVE:
             self.animate_circular()
         else:
@@ -50,8 +53,8 @@ class Missile(pygame.sprite.Sprite, Animation):
             return self.state
 
         self.rect.move_ip(self.velocity[0], self.velocity[1])
-        if not (self.rect.height + screen.get_height() > self.rect.y > -self.rect.height and
-                self.rect.width + screen.get_width() > self.rect.x > -self.rect.width):
+        if not (self.rect.height + args[0].get_height() > self.rect.y > -self.rect.height and
+                self.rect.width + args[0].get_width() > self.rect.x > -self.rect.width):
             self.active = False
             self.state = self.State.DEAD
         return self.state

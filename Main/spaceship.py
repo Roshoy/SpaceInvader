@@ -22,9 +22,10 @@ class SpaceShip(pygame.sprite.Sprite, Animation):
         pygame.sprite.Sprite.__init__(self)
         Animation.__init__(self)
         self.rect = rect
-        self.move_dir = Vector(0, 1)
-        self.velocity = self.move_dir * speed
+        #self.move_dir = Vector(0, 1)
+        self.velocity = Vector(0, 1) * speed
         self.speed = speed
+        self.acceleration = 1
         self.shot_timer = 0
         self.can_shoot = False
         self.life = self.max_life
@@ -50,10 +51,10 @@ class SpaceShip(pygame.sprite.Sprite, Animation):
         if self.life <= 0:
             self.set_state(self.State.EXPLODING)
 
-    def update(self, d_time):
+    def update(self, *args):
         self.rect.move_ip(self.velocity[0], self.velocity[1])
         if self.shot_timer >= self.shot_interval:
             self.can_shoot = True
         else:
-            self.shot_timer += d_time
+            self.shot_timer += args[0]
 
