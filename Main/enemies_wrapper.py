@@ -16,10 +16,12 @@ class EnemiesWrapper(pygame.sprite.Group):
 
     def update(self, d_time, players: pygame.sprite.Group, missile_wrapper: MissileWrapper):
         for e in self.sprites():
-            missile_wrapper.enemy_hit(e)
+            if e.life > 0:
+                missile_wrapper.enemy_hit(e)
         for e in self.sprites():
-            missile_wrapper.enemy_aoe_hit(e)
-            missile_wrapper.add_from_enemy(e.shoot())
+            if e.life > 0:
+                missile_wrapper.enemy_aoe_hit(e)
+                missile_wrapper.add_from_enemy(e.shoot())
             if e.state is Enemy.State.DEAD:
                 self.remove(e)
 

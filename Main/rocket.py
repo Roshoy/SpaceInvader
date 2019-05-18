@@ -9,8 +9,8 @@ class Rocket(Missile):
     stat_size = (12, 24)
     tag = "rocket"
 
-    def __init__(self, rect, player_num, direction=Vector(0, -1)):
-        super().__init__(rect, "player" + str(player_num), direction)
+    def __init__(self, rect, owner, direction=Vector(0, -1)):
+        super().__init__(rect, owner, direction)
         self.set_state(self.State.ALIVE)
 
     @classmethod

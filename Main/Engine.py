@@ -1,7 +1,4 @@
 import sys
-import pygame
-import random
-from Main.vector import Vector
 from Main.Player import *
 from Main.enemy import Enemy
 from Main.star import Star
@@ -10,7 +7,7 @@ from Main.missile_wrapper import MissileWrapper
 from Main.enemies_wrapper import EnemiesWrapper
 
 from Main.simple_missiles import *
-
+from Main.hud import PlayerHud
 
 class Engine:
     def __init__(self, screen):
@@ -23,8 +20,8 @@ class Engine:
         Player.init()
         SecondPlayer.init()
 
-    def player_prefab(self, type = 1):
-        if type == 1:
+    def player_prefab(self, t=1):
+        if t == 1:
             return Player(pygame.Rect(0, 0, 40, 40), 9)
         else:
             return SecondPlayer(pygame.Rect(0, 0, 40, 40), 9)
@@ -35,6 +32,10 @@ class Engine:
         buff[4] = -1
         player1.controls = tuple(buff)
         enemies_wrapper = EnemiesWrapper(self.screen)
+
+        player_hud = PlayerHud((self.screen.get_width(), self.screen.get_height()), player1.max_life,
+                               player1.rockets_count)
+        huds = pygame.sprite.Group(player_hud)
 
         player = pygame.sprite.Group(player1)
         missile_wrapper = MissileWrapper()
@@ -59,7 +60,7 @@ class Engine:
 
             if player1.state is Player.State.DEAD:
                 return
-
+            huds.update(player1.points, player1.life, player1.rockets_count)
             self.screen.fill((0, 0, 0))
             for s in self.stars:
                 s.update(self.screen)
@@ -67,7 +68,7 @@ class Engine:
             enemies_wrapper.draw(self.screen)
             missile_wrapper.draw(self.screen)
             player.draw(self.screen)
-
+            huds.draw(self.screen)
             pygame.display.flip()
         #pygame.mouse.set_visible(True)
 

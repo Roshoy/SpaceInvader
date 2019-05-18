@@ -27,23 +27,22 @@ class MissileWrapper:
     def enemy_hit(self, enemy: Enemy):
         for m in pygame.sprite.spritecollide(enemy, self.player_missiles, False):
             if m.state is Missile.State.ALIVE:
-                enemy.get_hit(m)
+                if 0 >= enemy.get_hit(m):
+                    m.owner.points += enemy.points
                 m.set_state(Missile.State.DEAD)
 
         for m in pygame.sprite.spritecollide(enemy, self.player_rockets, False):
             if m.state is Missile.State.ALIVE:
-                enemy.get_hit(m)
+                if 0 >= enemy.get_hit(m):
+                    m.owner.points += enemy.points
                 m.set_state(Missile.State.EXPLODING)
 
     def enemy_aoe_hit(self, enemy: Enemy):
         for r in self.player_rockets.sprites():
-            if r.state is Missile.State.EXPLODING:
-                print("Pos: " + str(r.rect.topleft))
-                print("Cnt: " + str(r.rect.center))
-                print("atv: " + str(r.active))
             if Vector(r.rect.center[0] - enemy.rect.center[0], r.rect.center[1] - enemy.rect.center[1]).magnitude() <\
                     r.radius and r.state is Missile.State.EXPLODING and r.active:
-                enemy.get_hit(r)
+                if 0 >= enemy.get_hit(r):
+                    r.owner.points += enemy.points
                 return True
         return False
 
