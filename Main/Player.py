@@ -22,7 +22,6 @@ class Player(SpaceShip):
     tag = "player"
     missile_size = (8, 24)
     max_life = 10
-    player_num = 1
     stat_size = (40, 40)
 
     def __init__(self, rect, speed, controls=
@@ -35,6 +34,8 @@ class Player(SpaceShip):
         self.acceleration = self.speed * 2.0
         self.state = None
         self.set_state(self.State.FORWARD)
+        self.points = 0
+        self.rockets_count = 10
 
     @classmethod
     def init(cls):
@@ -49,15 +50,19 @@ class Player(SpaceShip):
         cls.add_frames("player_right_4", 1, cls.State.RIGHT, (cls.stat_size[0], cls.stat_size[1] * 3 / 2))
 
     def missile_prefab(self):
-        return PlayerMissile(self.rect.center, self.player_num, Vector(0, -1))
+        return PlayerMissile(self.rect.center, self, Vector(0, -1))
 
     def rocket_prefab(self):
-        return Rocket(pygame.Rect(self.rect.center, (12, 24)), self.player_num)
+        return Rocket(pygame.Rect(self.rect.center, (12, 24)), self)
 
     def shoot(self):
         res = super().shoot()
         if res and (pygame.key.get_pressed()[self.controls[5]] or pygame.mouse.get_pressed()[2]):
-            return self.rocket_prefab()
+            if self.rockets_count > 0:
+                self.rockets_count -= 1
+                return self.rocket_prefab()
+            else:
+                return False
         return res
 
     def shoot_trigger(self):
@@ -156,7 +161,6 @@ class Player(SpaceShip):
 
 
 class SecondPlayer(Player):
-    player_num = 2
 
     def __init__(self, rect, speed, controls=
                  (pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d, pygame.K_1, pygame.K_BACKQUOTE)):

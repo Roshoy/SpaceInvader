@@ -50,6 +50,7 @@ class SpaceShip(pygame.sprite.Sprite, Animation):
         self.life -= missile.damage
         if self.life <= 0:
             self.set_state(self.State.EXPLODING)
+        return self.life
 
     def update(self, *args):
         self.rect.move_ip(self.velocity[0], self.velocity[1])
