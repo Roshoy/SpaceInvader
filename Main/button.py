@@ -14,13 +14,19 @@ class Button(pygame.Rect):
         self.highlighted_font = pygame.font.SysFont(None, 30)
         self.text = text
         self.set_state(self.background_color[3], self.font)
+        self.quasi_button = 0
 
     def set_state(self, alpha, font):
         self.background.set_alpha(alpha)
         self.context = font.render(self.text, True, (255, 255, 255))
         self.dest = (self.center[0] - self.context.get_size()[0] / 2, self.center[1] - self.context.get_size()[1] / 2)
 
+    def set_quasi_button(self):
+        self.quasi_button = 1
+
     def highlight(self):
+        if self.quasi_button:
+            return
         if self.highlighted:
             return
         self.highlighted = True

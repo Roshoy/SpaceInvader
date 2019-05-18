@@ -8,9 +8,11 @@ from Main.animation import Animation
 class Menu:
     buttons = []
 
-    def __init__(self, screen, title):
-        self.buttons.append(Button(pygame.Rect(400, 200, 200, 100), "Single player mode"))
-        self.buttons.append(Button(pygame.Rect(200, 200, 200, 100), "Multiplayer mode"))
+    def __init__(self, screen: pygame.Surface, title):
+        self.width = screen.get_width()
+        self.height = screen.get_height()
+        self.buttons.append(Button(pygame.Rect(self.width/2 - 220, self.height/4, 200, 100), "Single player mode"))
+        self.buttons.append(Button(pygame.Rect(self.width/2 + 20, self.height/4, 200, 100), "Multiplayer mode"))
         self.screen = screen
         self.stars = [Star(screen) for x in range(200)]
         self.menu_font = pygame.font.SysFont(None, 40)
@@ -40,11 +42,20 @@ class Menu:
                     b.highlight()
                     (b1, b2, b3) = pygame.mouse.get_pressed()
                     if b1 | b2 | b3:
-                        #screen = pygame.display.set_mode((800, 600))
                         engine = Engine(self.screen)
                         if b.text == "Single player mode":
-                            engine.run_single()
-                        else:
+                            game_result = engine.run_single()
+                            #self.buttons.append(Button(pygame.Rect(self.screen.get_width() / 2 - pygame.Rect(self.screen.get_width()/ 6, self.screen.get_height() / 2, 200, 100), "Single player mode"))
+                           ## self.buttons.append(Button(pygame.Rect(self.screen.get_width()) / 2, self.screen.get_height() / 2, 200, 100), "Wynik"))
+                            print(game_result)
+                            end_game_message = "You score " + game_result.__str__() + " points"
+                            if self.buttons.__len__() > 2:
+                                self.buttons.pop()
+                            self.buttons.append(Button(pygame.Rect(self.width/2 - 200,self.height/2,400,100),end_game_message))
+                            self.buttons[2].set_quasi_button()
+                            ##if self.buttons.__len__() > 2:
+                             ##  pass
+                        elif b.text == "Multiplayer mode":
                             engine.run_multi()
                 else:
                     b.unhighlight()

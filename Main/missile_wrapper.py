@@ -11,6 +11,8 @@ class MissileWrapper:
         self.player_missiles = pygame.sprite.Group()
         self.hits = 0
         self.player_rockets = pygame.sprite.Group()
+        self.player_hit_sound = pygame.mixer.Sound("../Sounds/chamber_decompressing.wav")
+        self.bomb_explosion_sound = pygame.mixer.Sound("../Sounds/bomb_explosion.wav")
 
     def player_hit(self, player: Player):
         if player.state is Player.State.EXPLODING or player.state is Player.State.DEAD:
@@ -23,6 +25,7 @@ class MissileWrapper:
                 self.hits += 1
                 print("Trafiony po raz: " + str(self.hits))
                 print("Zycie: "+str(player.life))
+                self.player_hit_sound.play(0, 0, 1)
 
     def enemy_hit(self, enemy: Enemy):
         for m in pygame.sprite.spritecollide(enemy, self.player_missiles, False):

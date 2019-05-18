@@ -60,7 +60,7 @@ class Engine:
             missile_wrapper.player_hit(player1)
 
             if player1.state is Player.State.DEAD:
-                return
+                return player1.points
             huds.update(player1.points, player1.life, player1.rockets_count)
             self.screen.fill((0, 0, 0))
             for s in self.stars:

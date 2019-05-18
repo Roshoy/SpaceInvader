@@ -4,6 +4,8 @@ from Main.simple_missiles import PlayerMissile
 from Main.spaceship import SpaceShip
 from Main.animation import Animation
 from Main.rocket import Rocket
+from Main.missile import Missile
+
 from enum import Enum
 
 
@@ -36,6 +38,9 @@ class Player(SpaceShip):
         self.set_state(self.State.FORWARD)
         self.points = 0
         self.rockets_count = 10
+        self.laser_shot_sound = pygame.mixer.Sound("../Sounds/laser_shot.wav")
+        'self.rocket_shot_sound = pygame.mixer.Sound("../Sounds/rocket_shot.wav")'
+        self.player_explosion_sound = pygame.mixer.Sound("../Sounds/player_explosion.wav")
 
     @classmethod
     def init(cls):
@@ -60,9 +65,12 @@ class Player(SpaceShip):
         if res and (pygame.key.get_pressed()[self.controls[5]] or pygame.mouse.get_pressed()[2]):
             if self.rockets_count > 0:
                 self.rockets_count -= 1
+                "self.rocket_shot_sound.play(0, 0, 1)"
                 return self.rocket_prefab()
             else:
                 return False
+        if res:
+            self.laser_shot_sound.play(0, 0, 1)
         return res
 
     def shoot_trigger(self):
@@ -76,9 +84,18 @@ class Player(SpaceShip):
     def set_state(self, new_state):
         if self.state is new_state:
             return
+        ##if self.state is self.State.EXPLODING:
+          ##  self.player_explosion_sound.play(0, 0, 1)
         self.state = new_state
         if self.state is not self.State.DEAD:
             self.set_frame_set(self.state)
+
+    def get_hit(self, missile: Missile):
+        left_hp = super().get_hit(Missile)
+        print("Jestem w funkcji")
+        if left_hp == 0:
+            self.player_explosion_sound.play(0, 0, 1)
+        return left_hp
 
     def move_keyboard(self, screen):
         acc = self.acceleration / self.speed / 40
