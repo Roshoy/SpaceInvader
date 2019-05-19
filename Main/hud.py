@@ -64,13 +64,16 @@ class PlayerHud(pygame.sprite.DirtySprite):
 
     def update(self, points, life, rockets):
         if points != self.points:
+            self.points = points
             self.anything_changed = True
             self.points_text = self.points_font.render(str(points), True, self.points_color)
         if life != self.life:
+            self.life = life
             self.anything_changed = True
             self.life_text = self.life_font.render(('{:'+str(self.life_len)+'d}').format(life) +
                                                    " / ", True, self.life_color)
         if rockets != self.rockets:
+            self.rockets = rockets
             self.anything_changed = True
             self.rocket_text = self.rocket_font.render(str(rockets), True, self.points_color)
 

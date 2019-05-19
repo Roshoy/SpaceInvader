@@ -13,7 +13,9 @@ class Rocket(Missile):
         super().__init__(rect, owner, direction)
         self.set_state(self.State.ALIVE)
         self.bomb_explosion_sound = pygame.mixer.Sound("../Sounds/bomb_explosion.wav")
+        self.bomb_explosion_sound.set_volume(0.1)
         self.rocket_shot_sound = pygame.mixer.Sound("../Sounds/rocket_shot.wav")
+        self.rocket_shot_sound.set_volume(0.1)
         self.rocket_shot_sound.play(0, 0, 1)
 
     @classmethod

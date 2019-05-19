@@ -17,7 +17,7 @@ class Menu:
         self.stars = [Star(screen) for x in range(200)]
         self.menu_font = pygame.font.SysFont(None, 40)
         self.menu_title = self.menu_font.render(title, True, (255, 255, 255))
-        self.menu_title_dest = (self.screen.get_width() / 2  - self.menu_title.get_size()[0] / 2,
+        self.menu_title_dest = (self.screen.get_width() / 2 - self.menu_title.get_size()[0] / 2,
                                 100 - self.menu_title.get_size()[1] / 2)
 
     def run(self):
@@ -42,6 +42,7 @@ class Menu:
                     b.highlight()
                     (b1, b2, b3) = pygame.mouse.get_pressed()
                     if b1 | b2 | b3:
+
                         engine = Engine(self.screen)
                         if b.text == "Single player mode":
                             game_result = engine.run_single()

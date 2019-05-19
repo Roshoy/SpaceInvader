@@ -37,10 +37,12 @@ class Player(SpaceShip):
         self.state = None
         self.set_state(self.State.FORWARD)
         self.points = 0
-        self.rockets_count = 10
+        self.rockets_count = 5
         self.laser_shot_sound = pygame.mixer.Sound("../Sounds/laser_shot.wav")
+        self.laser_shot_sound.set_volume(0.1)
         'self.rocket_shot_sound = pygame.mixer.Sound("../Sounds/rocket_shot.wav")'
         self.player_explosion_sound = pygame.mixer.Sound("../Sounds/player_explosion.wav")
+        self.player_explosion_sound.set_volume(0.1)
 
     @classmethod
     def init(cls):
@@ -84,14 +86,12 @@ class Player(SpaceShip):
     def set_state(self, new_state):
         if self.state is new_state:
             return
-        ##if self.state is self.State.EXPLODING:
-          ##  self.player_explosion_sound.play(0, 0, 1)
         self.state = new_state
         if self.state is not self.State.DEAD:
             self.set_frame_set(self.state)
 
     def get_hit(self, missile: Missile):
-        left_hp = super().get_hit(Missile)
+        left_hp = super().get_hit(missile)
         print("Jestem w funkcji")
         if left_hp == 0:
             self.player_explosion_sound.play(0, 0, 1)

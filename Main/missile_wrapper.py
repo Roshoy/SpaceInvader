@@ -12,7 +12,9 @@ class MissileWrapper:
         self.hits = 0
         self.player_rockets = pygame.sprite.Group()
         self.player_hit_sound = pygame.mixer.Sound("../Sounds/chamber_decompressing.wav")
+        self.player_hit_sound.set_volume(0.1)
         self.bomb_explosion_sound = pygame.mixer.Sound("../Sounds/bomb_explosion.wav")
+        self.bomb_explosion_sound.set_volume(0.1)
 
     def player_hit(self, player: Player):
         if player.state is Player.State.EXPLODING or player.state is Player.State.DEAD:
