@@ -153,7 +153,7 @@ class Player(SpaceShip):
             if self.animate_serial():
                 self.set_state(self.state.DEAD)
             return False
-        elif abs(self.velocity[0]) > abs(self.velocity[1]):
+        elif self.velocity.magnitude() > 0.1 and abs(self.velocity[0]) > abs(self.velocity[1]):
             if self.velocity[0] < 0 and self.state is not self.State.LEFT:
                 self.set_state(Player.State.TURNLEFT)
             elif self.velocity[0] > 0 and self.state is not self.State.RIGHT:

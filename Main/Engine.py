@@ -10,11 +10,9 @@ from Main.hud import PlayerHud
 
 
 class Engine:
-    
-    
-    def __init__(self, screen):
+    def __init__(self, screen, stars):
         self.screen = screen
-        self.stars = [Star(screen) for x in range(300)]
+        self.stars = stars
         EnemyMissile.init()
         PlayerMissile.init()
         Rocket.init()
@@ -28,6 +26,8 @@ class Engine:
         self.player2 = None
         self.huds = None
         self.player = None
+        self.player1 = None
+        self.player2 = None
         
     def player_prefab(self, t=1):
         if t == 1:
@@ -35,22 +35,32 @@ class Engine:
         else:
             return SecondPlayer(pygame.Rect(0, 0, 40, 40), 9)
 
+    def draw(self):
+        self.screen.fill((0, 0, 0))
+        for s in self.stars:
+            s.update(self.screen)
+            s.draw(self.screen)
+        self.enemies_wrapper.draw(self.screen)
+        self.missile_wrapper.draw(self.screen)
+        self.player.draw(self.screen)
+        self.huds.draw(self.screen)
+        pygame.display.flip()
+
     def init_single(self):
-        player1 = self.player_prefab()
-        buff = list(player1.controls)
+        self.player1 = self.player_prefab()
+        buff = list(self.player1.controls)
         buff[4] = -1
-        player1.controls = tuple(buff)
+        self.player1.controls = tuple(buff)
         self.enemies_wrapper = EnemiesWrapper(self.screen)
 
-        player_hud = PlayerHud((self.screen.get_width(), self.screen.get_height()), player1.max_life,
-                               player1.rockets_count)
+        player_hud = PlayerHud((self.screen.get_width(), self.screen.get_height()), self.player1.max_life,
+                               self.player1.rockets_count)
         player_hud.align_right()
         self.huds = pygame.sprite.Group(player_hud)
-        self.player = pygame.sprite.Group(player1)
+        self.player = pygame.sprite.Group(self.player1)
         self.missile_wrapper = MissileWrapper()
 
     def run_single(self):
-        self.init_single()
         while True:
             d_time = self.clock.tick(60)
 
@@ -61,39 +71,31 @@ class Engine:
                     return -1
 
             if self.player.sprites()[0].shoot_trigger():
-                self.missile_wrapper.add_from_player(self.player.sprites()[0].shoot())
+                self.missile_wrapper.add_from_player(self.player1.shoot())
             self.player.update(d_time, True)
 
             self.missile_wrapper.update(self.screen)
 
             self.enemies_wrapper.update(d_time, self.player, self.missile_wrapper)
-            self.missile_wrapper.player_hit(self.player.sprites()[0])
+            self.missile_wrapper.player_hit(self.player1)
 
-            if self.player.sprites()[0].state is Player.State.DEAD:
-                return self.player.sprites()[0].points
-            self.huds.update(self.player.sprites()[0].points, self.player.sprites()[0].life,
-                             self.player.sprites()[0].rockets_count)
-            self.screen.fill((0, 0, 0))
-            for s in self.stars:
-                s.update(self.screen)
-                s.draw(self.screen)
-            self.enemies_wrapper.draw(self.screen)
-            self.missile_wrapper.draw(self.screen)
-            self.player.draw(self.screen)
-            self.huds.draw(self.screen)
-            pygame.display.flip()
+            if self.player1.state is Player.State.DEAD:
+                return self.player1.points
+            self.huds.update(self.player1.points, self.player1.life,
+                             self.player1.rockets_count)
+            self.draw()
         #pygame.mouse.set_visible(True)
 
     def init_multi(self):
-        player1 = self.player_prefab()
-        player2 = self.player_prefab(2)
-        self.player = pygame.sprite.Group(player1, player2)
+        self.player1 = self.player_prefab()
+        self.player2 = self.player_prefab(2)
+        self.player = pygame.sprite.Group(self.player1, self.player2)
 
-        player1_hud = PlayerHud((self.screen.get_width(), self.screen.get_height()), self.player.sprites()[0].max_life,
-                                self.player.sprites()[0].rockets_count)
+        player1_hud = PlayerHud((self.screen.get_width(), self.screen.get_height()), self.player1.max_life,
+                                self.player1.rockets_count)
         player1_hud.align_right()
-        player2_hud = PlayerHud((self.screen.get_width(), self.screen.get_height()), self.player.sprites()[1].max_life,
-                                self.player.sprites()[1].rockets_count)
+        player2_hud = PlayerHud((self.screen.get_width(), self.screen.get_height()), self.player2.max_life,
+                                self.player2.rockets_count)
 
         self.huds = pygame.sprite.Group(player1_hud, player2_hud)
 
@@ -102,7 +104,6 @@ class Engine:
         self.missile_wrapper = MissileWrapper()
 
     def run_multi(self):
-        self.init_multi()
 
         while True:
             d_time = self.clock.tick(60)
@@ -124,27 +125,20 @@ class Engine:
             for p in self.player.sprites():
                 self.missile_wrapper.player_hit(p)
 
+            if self.player1.state is not Player.State.DEAD:
+                self.huds.sprites()[0].update(self.player1.points, self.player1.life,
+                                              self.player1.rockets_count)
+            if self.player2.state is not Player.State.DEAD:
+                self.huds.sprites()[1].update(self.player2.points, self.player2.life,
+                                              self.player2.rockets_count)
+
             for p in self.player.sprites():
                 if p.state is Player.State.DEAD:
                     self.player.remove(p)
                     if len(self.player.sprites()) == 0:
-                        return self.huds.sprites()[0].points, self.huds.sprites()[1].points
+                        return self.player1.points, self.player2.points
 
-            self.huds.sprites()[0].update(self.player.sprites()[0].points, self.player.sprites()[0].life,
-                                          self.player.sprites()[0].rockets_count)
-            if len(self.player.sprites()):
-                self.huds.sprites()[1].update(self.player.sprites()[1].points, self.player.sprites()[1].life,
-                                              self.player.sprites()[1].rockets_count)
-
-            self.screen.fill((0, 0, 0))
-            for s in self.stars:
-                s.update(self.screen)
-                s.draw(self.screen)
-            self.enemies_wrapper.draw(self.screen)
-            self.missile_wrapper.draw(self.screen)
-            self.player.draw(self.screen)
-            self.huds.draw(self.screen)
-            pygame.display.flip()
+            self.draw()
 
 
 
