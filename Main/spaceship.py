@@ -49,6 +49,7 @@ class SpaceShip(pygame.sprite.Sprite, Animation):
     def get_hit(self, missile: Missile):
         self.life -= missile.damage
         if self.life <= 0:
+            self.life = 0
             self.set_state(self.State.EXPLODING)
         return self.life
 

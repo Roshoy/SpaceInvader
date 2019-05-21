@@ -44,4 +44,4 @@ class EnemiesWrapper(pygame.sprite.Group):
                 self.timer = 0
 
     def enemy_prefab(self, pos):
-        return Enemy(pygame.Rect(pos[0], pos[1], 30, 30))
+        return Enemy(pygame.Rect(pos[0], pos[1], 30, 30), random.randrange(4, 7, 1))

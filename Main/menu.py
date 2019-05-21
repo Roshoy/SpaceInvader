@@ -8,8 +8,8 @@ from Main.animation import Animation
 class Menu:
 
 
-    def __init__(self, screen: pygame.Surface, title, stars):
-        self.clock = pygame.time.Clock()
+    def __init__(self, screen: pygame.Surface, title, stars, clock):
+        self.clock = clock
         self.buttons = []
         self.screen = screen
         self.stars = stars
@@ -25,7 +25,10 @@ class Menu:
         self.menu_title_dest = (self.screen.get_width() / 2 - self.menu_title.get_size()[0] / 2,
                                 100 - self.menu_title.get_size()[1] / 2)
 
-    def update_buttons_pos(self, dy):
+    def update_buttons_pos(self, top):
+        if len(self.buttons) == 0:
+            return
+        dy = top - self.buttons[0].top + 50
         for b in self.buttons:
             b.top += dy
             b.highlight()
@@ -45,7 +48,9 @@ class Menu:
         text = self.subtitle_font.render(title, True, (255, 255, 255))
         dest = (self.screen.get_width() / 2 - text.get_size()[0] / 2, self.subtitles[ind][1][1])
         self.subtitles[ind] = (text, dest)
-        self.update_buttons_pos(text.get_size()[1])
+        i = len(self.subtitles) - 1
+        y = self.subtitles[i][0].get_size()[1] + self.subtitles[i][1][1]
+        self.update_buttons_pos(y)
 
     def add_button(self, rect: pygame.Rect, title: str):
         if len(self.buttons) > 0:
@@ -66,10 +71,10 @@ class Menu:
                 if event.type == pygame.QUIT:
                     sys.exit(0)
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    sys.exit(0)
+                    return -1
 
             if k < 0:
-                return
+                return 0
             k -= 1
 
             self.screen.fill((0, 0, 0))
@@ -84,7 +89,8 @@ class Menu:
             pygame.display.flip()
 
     def run(self):
-        self.delay(30)
+        if self.delay(20) == -1:
+            return -1
 
         while True:
 
@@ -93,7 +99,7 @@ class Menu:
                 if event.type == pygame.QUIT:
                     sys.exit(0)
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    sys.exit(0)
+                    return -1
 
             for x in range(len(self.buttons)):
                 if self.buttons[x].collidepoint(pygame.mouse.get_pos()):

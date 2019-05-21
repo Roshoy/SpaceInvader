@@ -21,13 +21,13 @@ class Game:
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(0.1)
         self.screen = pygame.display.set_mode((1000, 800))  # , pygame.FULLSCREEN)
-
+        self.clock = pygame.time.Clock()
         self.stars = [Star(self.screen) for x in range(300)]
-        self.engine = Engine(self.screen, self.stars)
+        self.engine = Engine(self.screen, self.stars, self.clock)
 
-        self.main_menu = Menu(self.screen, "Space Invaders Deluxe", self.stars)
-        self.gameover_menu = Menu(self.screen, "Game Over", self.stars)
-        self.pause_menu = Menu(self.screen, "Pause", self.stars)
+        self.main_menu = Menu(self.screen, "Space Invaders Deluxe", self.stars, self.clock)
+        self.gameover_menu = Menu(self.screen, "Game Over", self.stars, self.clock)
+        self.pause_menu = Menu(self.screen, "Pause", self.stars, self.clock)
         self.points = 0
         self.game_state = self.GameState.MAIN_M
         width = self.screen.get_width()
@@ -99,7 +99,7 @@ class Game:
                     self.game_state = self.GameState.SINGLE_INIT
                 elif res == 1:
                     self.game_state = self.GameState.MULTI_INIT
-                elif res == 2:
+                elif res == 2 or res == -1:
                     sys.exit(0)
             elif self.game_state is self.GameState.GAMEOVER_M:
                 self.set_gameover_menu_title()
@@ -109,12 +109,12 @@ class Game:
                         self.game_state = self.GameState.SINGLE_INIT
                     else:
                         self.game_state = self.GameState.MULTI_INIT
-                elif res == 1:
+                elif res == 1 or res == -1:
                     self.game_state = self.GameState.MAIN_M
 
             elif self.game_state is self.GameState.PAUSE_M:
                 res = self.pause_menu.run()
-                if res == 0:
+                if res == 0 or res == -1:
                     if last_game_single:
                         self.game_state = self.GameState.SINGLE_ON
                     else:

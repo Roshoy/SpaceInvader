@@ -98,17 +98,17 @@ class Player(SpaceShip):
         return left_hp
 
     def move_keyboard(self, screen):
-        acc = self.acceleration / self.speed / 40
+        acc = self.acceleration / self.speed / 20
         move_dir = self.velocity / self.speed
         if move_dir[0] > 0:
-            move_dir[0] -= acc / 5
+            move_dir[0] -= acc / 3
         elif move_dir[0] < 0:
-            move_dir[0] += acc / 5
+            move_dir[0] += acc / 3
 
         if move_dir[1] > 0:
-            move_dir[1] -= acc / 5
+            move_dir[1] -= acc / 3
         elif move_dir[1] < 0:
-            move_dir[1] += acc / 5
+            move_dir[1] += acc / 3
 #       RIGHT, LEFT, UP, DOWN
         if pygame.key.get_pressed()[self.controls[3]] and move_dir[0] < 1:
             move_dir[0] += acc
@@ -182,3 +182,16 @@ class SecondPlayer(Player):
     def __init__(self, rect, speed, controls=
                  (pygame.K_w, pygame.K_s, pygame.K_a, pygame.K_d, pygame.K_1, pygame.K_BACKQUOTE)):
         super().__init__(rect, speed, controls)
+
+    @classmethod
+    def init(cls):
+        super().init()
+        temp = pygame.image.load("../Textures/color_template.png")
+        arr = pygame.PixelArray(temp)
+        for key_set in cls.frame_sets.keys():
+            for s in range(len(cls.frame_sets[key_set])):
+                pixel_array = pygame.PixelArray(cls.frame_sets[key_set][s])
+                print(cls.frame_sets[key_set][s].unmap_rgb(pixel_array[0][0]))
+                for i in range(temp.get_size()[1]):
+                    pixel_array.replace(temp.unmap_rgb(arr[0][i]), temp.unmap_rgb(arr[1][i]))
+                cls.frame_sets[key_set][s] = pixel_array.make_surface()

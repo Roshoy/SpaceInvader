@@ -13,12 +13,12 @@ class Missile(pygame.sprite.Sprite, Animation):
         EXPLODING = 1
         DEAD = 2
 
-    def __init__(self, rect, owner, direction):
+    def __init__(self, rect, owner, direction, speed=7):
         pygame.sprite.Sprite.__init__(self)
         Animation.__init__(self)
         rect.left -= self.stat_size[0] / 2
         self.rect = rect
-        self.speed = 7
+        self.speed = speed
         self.active = True
         self.color = (0, 255, 0)
         self.velocity = direction
