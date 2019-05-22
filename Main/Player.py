@@ -39,10 +39,10 @@ class Player(SpaceShip):
         self.points = 0
         self.rockets_count = 5
         self.laser_shot_sound = pygame.mixer.Sound("../Sounds/laser_shot.wav")
-        self.laser_shot_sound.set_volume(0.1)
+        self.laser_shot_sound.set_volume(0.7)
         'self.rocket_shot_sound = pygame.mixer.Sound("../Sounds/rocket_shot.wav")'
         self.player_explosion_sound = pygame.mixer.Sound("../Sounds/player_explosion.wav")
-        self.player_explosion_sound.set_volume(0.1)
+        self.player_explosion_sound.set_volume(0.7)
 
     @classmethod
     def init(cls):

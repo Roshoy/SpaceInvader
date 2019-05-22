@@ -19,8 +19,8 @@ class Game:
     def __init__(self):
         pygame.mixer.music.load('../Sounds/battle.wav')
         pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(0.1)
-        self.screen = pygame.display.set_mode((1000, 800))  # , pygame.FULLSCREEN)
+        pygame.mixer.music.set_volume(0.4)
+        self.screen = pygame.display.set_mode((0, 0) , pygame.FULLSCREEN)
         self.clock = pygame.time.Clock()
         self.stars = [Star(self.screen) for x in range(300)]
         self.engine = Engine(self.screen, self.stars, self.clock)
