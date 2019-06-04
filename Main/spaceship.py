@@ -29,9 +29,6 @@ class SpaceShip(pygame.sprite.Sprite, Animation):
         self.can_shoot = False
         self.life = self.max_life
 
-    #    self.state = self.State.ALIVE
-    #   textures
-
     def missile_prefab(self):
         return Missile(pygame.Rect(self.rect.center, self.missile_size), self.velocity.normalized())
 
@@ -58,4 +55,3 @@ class SpaceShip(pygame.sprite.Sprite, Animation):
             self.can_shoot = True
         else:
             self.shot_timer += args[0]
-

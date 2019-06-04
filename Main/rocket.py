@@ -35,4 +35,3 @@ class Rocket(Missile):
         if self.state is self.State.EXPLODING:
             self.active = False
         return super().update(screen)
-

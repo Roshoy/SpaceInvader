@@ -63,7 +63,3 @@ class SoundManager:
     @staticmethod
     def sound_rocket_shot_stop():
         SoundManager.rocket_shot_sound.stop()
-
-
-
-

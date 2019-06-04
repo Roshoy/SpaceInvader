@@ -1,11 +1,12 @@
 import sys
-from Main.Player import *
+from Main.Player import Player, SecondPlayer
 from Main.enemy import Enemy
 from Main.rocket import Rocket
 from Main.missile_wrapper import MissileWrapper
 from Main.enemies_wrapper import EnemiesWrapper
-from Main.simple_missiles import *
+from Main.simple_missiles import PlayerMissile, EnemyMissile
 from Main.hud import PlayerHud
+import pygame
 
 
 class Engine:
@@ -27,14 +28,14 @@ class Engine:
         self.player = None
         self.player1 = None
         self.player2 = None
-        
+
     def player_prefab(self, t=1):
         if t == 1:
             return Player(pygame.Rect(self.screen.get_width()/2 + 80, self.screen.get_height() - 60, 40, 40), 9)
         else:
             return SecondPlayer(pygame.Rect(self.screen.get_width()/2 - 80, self.screen.get_height() - 65, 40, 40), 9)
 
-    def draw(self): # self.screen.fill((0, 0, 0)) needs to be called before
+    def draw(self):  # self.screen.fill((0, 0, 0)) needs to be called before
 
         for s in self.stars:
             s.update(self.screen)
@@ -48,7 +49,7 @@ class Engine:
     def delay(self, sec: int):
         counter_font = pygame.font.SysFont(None, 40, False, True)
         sec *= 1000  # to milliseconds
-        first_frame = True
+        # first_frame = True
         while sec > 0:
             print("Seconds: " + str(sec))
             d_time = self.clock.tick(60)
@@ -110,7 +111,6 @@ class Engine:
                              self.player1.rockets_count)
             self.screen.fill((0, 0, 0))
             self.draw()
-        #pygame.mouse.set_visible(True)
 
     def init_multi(self):
         self.player1 = self.player_prefab()
@@ -173,6 +173,3 @@ class Engine:
                         return self.player1.points, self.player2.points
             self.screen.fill((0, 0, 0))
             self.draw()
-
-
-

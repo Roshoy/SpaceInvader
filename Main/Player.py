@@ -62,7 +62,6 @@ class Player(SpaceShip):
         if res and (pygame.key.get_pressed()[self.controls[5]] or pygame.mouse.get_pressed()[2]):
             if self.rockets_count > 0:
                 self.rockets_count -= 1
-                "self.rocket_shot_sound.play(0, 0, 1)"
                 return self.rocket_prefab()
             else:
                 return False
@@ -127,7 +126,6 @@ class Player(SpaceShip):
             move_dir = move_dir.normalized()
 
         self.velocity = move_dir * self.speed
-       #self.velocity += move_dir
 
     def move_mouse(self, mouse_pos):
         move_dir = Vector(0, 0)

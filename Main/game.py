@@ -19,7 +19,7 @@ class Game:
 
     def __init__(self):
         SoundManager.play_music()
-        self.screen = pygame.display.set_mode((0, 0) , pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.clock = pygame.time.Clock()
         self.stars = [Star(self.screen) for x in range(300)]
         self.engine = Engine(self.screen, self.stars, self.clock)

@@ -22,7 +22,7 @@ class Animation:
         else:
             for i in range(count):
                 frames.append(pygame.transform.scale(
-                    pygame.image.load("../Textures/" + path + "_" + str(i+1) + ".png"), size))
+                    pygame.image.load("../Textures/" + path + "_" + str(i + 1) + ".png"), size))
 
         if key in cls.frame_sets.keys():
             cls.frame_sets.update({key: cls.frame_sets[key] + frames})
@@ -52,7 +52,7 @@ class Animation:
     def animate_serial(self):
         self.time_from_last_frame += 1
         if self.time_from_last_frame >= self.animation_speed and \
-                self.current_frame < len(self.frame_sets[self.current_frame_set])-1:
+                self.current_frame < len(self.frame_sets[self.current_frame_set]) - 1:
             self.time_from_last_frame = 0
             self.current_frame += 1
             self.image = self.current_img()

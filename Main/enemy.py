@@ -61,4 +61,3 @@ class Enemy(SpaceShip):
         elif self.state is self.state.EXPLODING:
             if self.animate_serial():
                 self.set_state(self.State.DEAD)
-
