@@ -1,6 +1,5 @@
 import pygame
 from Main.missile import Missile
-from Main.animation import Animation
 
 
 class PlayerMissile(Missile):

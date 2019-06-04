@@ -4,6 +4,7 @@ from Main.menu import Menu
 from Main.Engine import Engine
 from Main.star import Star
 from enum import Enum
+from Main.sound_manager import SoundManager
 
 
 class Game:
@@ -17,9 +18,7 @@ class Game:
         PAUSE_M = 6
 
     def __init__(self):
-        pygame.mixer.music.load('../Sounds/battle.wav')
-        pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(0.4)
+        SoundManager.play_music()
         self.screen = pygame.display.set_mode((0, 0) , pygame.FULLSCREEN)
         self.clock = pygame.time.Clock()
         self.stars = [Star(self.screen) for x in range(300)]
@@ -54,7 +53,6 @@ class Game:
 
     def run(self):
         self.points = 0
-        res = 0
         last_game_single = True
         while True:
             if self.game_state is self.GameState.SINGLE_INIT:

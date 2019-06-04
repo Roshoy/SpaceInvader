@@ -1,12 +1,9 @@
 import sys
 import pygame
 from Main.button import Button
-from Main.star import Star
-from Main.Engine import Engine
-from Main.animation import Animation
+
 
 class Menu:
-
 
     def __init__(self, screen: pygame.Surface, title, stars, clock):
         self.clock = clock

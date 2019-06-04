@@ -1,6 +1,5 @@
 from Main.vector import Vector
 import pygame
-import random
 from Main.missile import Missile
 from Main.animation import Animation
 from enum import Enum
@@ -22,7 +21,7 @@ class SpaceShip(pygame.sprite.Sprite, Animation):
         pygame.sprite.Sprite.__init__(self)
         Animation.__init__(self)
         self.rect = rect
-        #self.move_dir = Vector(0, 1)
+        # self.move_dir = Vector(0, 1)
         self.velocity = Vector(0, 1) * speed
         self.speed = speed
         self.acceleration = 1

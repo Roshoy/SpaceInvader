@@ -4,6 +4,7 @@ import random
 from Main.vector import Vector
 from Main.missile_wrapper import MissileWrapper
 
+
 class EnemiesWrapper(pygame.sprite.Group):
 
     def __init__(self, screen):

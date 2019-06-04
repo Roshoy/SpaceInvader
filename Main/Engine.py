@@ -1,7 +1,6 @@
 import sys
 from Main.Player import *
 from Main.enemy import Enemy
-from Main.star import Star
 from Main.rocket import Rocket
 from Main.missile_wrapper import MissileWrapper
 from Main.enemies_wrapper import EnemiesWrapper
@@ -48,7 +47,7 @@ class Engine:
 
     def delay(self, sec: int):
         counter_font = pygame.font.SysFont(None, 40, False, True)
-        sec *= 1000 # to milliseconds
+        sec *= 1000  # to milliseconds
         first_frame = True
         while sec > 0:
             print("Seconds: " + str(sec))
@@ -59,7 +58,7 @@ class Engine:
                     sys.exit(0)
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     return -1
-            text = counter_font.render(str(sec//1000), True, (0, 0, 255))
+            text = counter_font.render(str(sec//1000), True, (255, 255, 255))
             sec -= d_time
             self.screen.fill((0, 0, 0))
             self.screen.blit(text, (self.screen.get_width()/2 - text.get_size()[0]/2,

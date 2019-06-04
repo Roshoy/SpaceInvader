@@ -2,9 +2,9 @@ import pygame
 from Main.vector import Vector
 from Main.simple_missiles import PlayerMissile
 from Main.spaceship import SpaceShip
-from Main.animation import Animation
 from Main.rocket import Rocket
 from Main.missile import Missile
+from Main.sound_manager import SoundManager
 
 from enum import Enum
 
@@ -29,7 +29,7 @@ class Player(SpaceShip):
     def __init__(self, rect, speed, controls=
             (pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_LEFTBRACKET, pygame.K_RIGHTBRACKET)):
         super().__init__(rect, speed)
-        #move_dir = Vector(0, 0)
+        # move_dir = Vector(0, 0)
         self.velocity = Vector(0, 0)
         self.precision = 5
         self.controls = controls
@@ -38,11 +38,6 @@ class Player(SpaceShip):
         self.set_state(self.State.FORWARD)
         self.points = 0
         self.rockets_count = 5
-        self.laser_shot_sound = pygame.mixer.Sound("../Sounds/laser_shot.wav")
-        self.laser_shot_sound.set_volume(0.7)
-        'self.rocket_shot_sound = pygame.mixer.Sound("../Sounds/rocket_shot.wav")'
-        self.player_explosion_sound = pygame.mixer.Sound("../Sounds/player_explosion.wav")
-        self.player_explosion_sound.set_volume(0.7)
 
     @classmethod
     def init(cls):
@@ -72,7 +67,7 @@ class Player(SpaceShip):
             else:
                 return False
         if res:
-            self.laser_shot_sound.play(0, 0, 1)
+            SoundManager.sound_laser_shot()
         return res
 
     def shoot_trigger(self):
@@ -94,7 +89,7 @@ class Player(SpaceShip):
         left_hp = super().get_hit(missile)
         print("Jestem w funkcji")
         if left_hp == 0:
-            self.player_explosion_sound.play(0, 0, 1)
+            SoundManager.sound_player_explosion()
         return left_hp
 
     def move_keyboard(self, screen):
@@ -132,7 +127,7 @@ class Player(SpaceShip):
             move_dir = move_dir.normalized()
 
         self.velocity = move_dir * self.speed
-       # self.velocity += move_dir
+       #self.velocity += move_dir
 
     def move_mouse(self, mouse_pos):
         move_dir = Vector(0, 0)

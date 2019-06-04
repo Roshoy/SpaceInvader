@@ -1,6 +1,7 @@
 import pygame
 from enum import Enum
 
+
 class Animation:
     frame_sets = dict()
 
