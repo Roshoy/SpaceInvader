@@ -64,21 +64,17 @@ class Game:
             self.gameover_menu.set_subtitle_text(1, "Player2   " + str(self.points[1]))
             self.leaderboard.append(self.points[0])
             self.leaderboard.append(self.points[1])
-            self.leaderboard = sorted(self.leaderboard)
-            self.leaderboard = self.leaderboard[:0:-1]
-            print(self.leaderboard)
-            for i in range(0, len(self.leaderboard)):
-                self.gameover_menu.set_subtitle_text(i + 3, str(self.leaderboard[i]))
+
 
         else:
             self.gameover_menu.set_subtitle_text(0, "Player1")
             self.gameover_menu.set_subtitle_text(1, str(self.points))
             self.leaderboard.append(self.points)
-            self.leaderboard = sorted(self.leaderboard)
-            self.leaderboard = self.leaderboard[:0:-1]
-            print(self.leaderboard)
-            for i in range(0, len(self.leaderboard)):
-                self.gameover_menu.set_subtitle_text(i + 3, str(self.leaderboard[i]))
+        self.leaderboard = sorted(self.leaderboard)
+        self.leaderboard = self.leaderboard[-1:-6:-1]
+        print(self.leaderboard)
+        for i in range(0, len(self.leaderboard)):
+            self.gameover_menu.set_subtitle_text(i + 3, str(self.leaderboard[i]))
 
     def run(self):
         self.points = 0

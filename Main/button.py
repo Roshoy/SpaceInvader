@@ -1,6 +1,30 @@
 import pygame
 
 
+class TextBox(pygame.sprite.Sprite):
+    validChars = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./"
+    shiftChars = '~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'
+
+    def __init__(self, font_size):
+        pygame.sprite.Sprite.__init__(self)
+        self.text = ""
+        self.font = pygame.font.Font(None, font_size)
+        self.image = self.font.render("Enter your name", False, [255, 255, 255])
+        self.rect = self.image.get_rect()
+
+    def add_chr(self, char, shift_down):
+        if char in self.validChars and not shift_down:
+            self.text += char
+        elif char in self.validChars and shift_down:
+            self.text += self.shiftChars[self.validChars.index(char)]
+        self.update()
+
+    def update(self):
+        old_rect_pos = self.rect.center
+        self.image = self.font.render(self.text, False, [255, 255, 255])
+        self.rect = self.image.get_rect()
+        self.rect.center = old_rect_pos
+
 class Button(pygame.Rect):
     def __init__(self, rect, text):
         super().__init__(rect)
