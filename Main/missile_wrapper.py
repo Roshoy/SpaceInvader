@@ -23,8 +23,7 @@ class MissileWrapper:
                 m.active = False
                 m.set_state(Missile.State.EXPLODING)
                 self.hits += 1
-                print("Trafiony po raz: " + str(self.hits))
-                print("Zycie: "+str(player.life))
+
                 SoundManager.sound_player_hit()
 
     def enemy_hit(self, enemy: Enemy):

@@ -18,11 +18,11 @@ class Animation:
         frames = []
         if count == 1:
             frames.append(pygame.transform.scale(
-                pygame.image.load("../Textures/" + path + ".png"), size))
+                pygame.image.load("./Textures/" + path + ".png"), size))
         else:
             for i in range(count):
                 frames.append(pygame.transform.scale(
-                    pygame.image.load("../Textures/" + path + "_" + str(i + 1) + ".png"), size))
+                    pygame.image.load("./Textures/" + path + "_" + str(i + 1) + ".png"), size))
 
         if key in cls.frame_sets.keys():
             cls.frame_sets.update({key: cls.frame_sets[key] + frames})

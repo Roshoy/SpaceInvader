@@ -13,7 +13,7 @@ class EnemiesWrapper(pygame.sprite.Group):
         self.timer = 0
         self.new_enemy_spawn_interval = 1500
         self.new_enemies_number = 2
-        self.max_enemies = 10
+        self.max_enemies = 12
 
     def update(self, d_time, players: pygame.sprite.Group, missile_wrapper: MissileWrapper):
         for e in self.sprites():

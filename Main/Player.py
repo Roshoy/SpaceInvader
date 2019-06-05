@@ -86,7 +86,6 @@ class Player(SpaceShip):
 
     def get_hit(self, missile: Missile):
         left_hp = super().get_hit(missile)
-        print("Jestem w funkcji")
         if left_hp == 0:
             SoundManager.sound_player_explosion()
         return left_hp
@@ -179,12 +178,12 @@ class SecondPlayer(Player):
     @classmethod
     def init(cls):
         super().init()
-        temp = pygame.image.load("../Textures/color_template.png")
+        temp = pygame.image.load("./Textures/color_template.png")
         arr = pygame.PixelArray(temp)
         for key_set in cls.frame_sets.keys():
             for s in range(len(cls.frame_sets[key_set])):
                 pixel_array = pygame.PixelArray(cls.frame_sets[key_set][s])
-                print(cls.frame_sets[key_set][s].unmap_rgb(pixel_array[0][0]))
+
                 for i in range(temp.get_size()[1]):
                     pixel_array.replace(temp.unmap_rgb(arr[0][i]), temp.unmap_rgb(arr[1][i]))
                 cls.frame_sets[key_set][s] = pixel_array.make_surface()

@@ -51,7 +51,7 @@ class Engine:
         sec *= 1000  # to milliseconds
         # first_frame = True
         while sec > 0:
-            print("Seconds: " + str(sec))
+
             d_time = self.clock.tick(60)
 
             for event in pygame.event.get():

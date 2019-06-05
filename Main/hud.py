@@ -2,8 +2,8 @@ import pygame
 
 
 class PlayerHud(pygame.sprite.DirtySprite):
-    rocket_icon = pygame.image.load("../Textures/rocket.png")
-    health_icon = pygame.image.load("../Textures/health.png")
+    rocket_icon = pygame.image.load("./Textures/rocket.png")
+    health_icon = pygame.image.load("./Textures/health.png")
 
     def __init__(self, size, max_life, rockets, points_color):
         super().__init__()
@@ -62,8 +62,8 @@ class PlayerHud(pygame.sprite.DirtySprite):
     def align_right(self):
         self.points_dest = (self.image.get_width() * 19 / 20 - self.points_text.get_width(),
                             self.image.get_height() / 20)
-        self.life_dest = (self.image.get_width() * 19 / 20 - self.life_text.get_width() /
-                          - self.max_life_text.get_width(), self.image.get_height() * 19 / 20 /
+        self.life_dest = (self.image.get_width() * 19 / 20 - self.life_text.get_width()
+                          - self.max_life_text.get_width(), self.image.get_height() * 19 / 20
                           - self.life_text.get_height())
         self.max_life_dest = (self.life_dest[0] + self.life_text.get_width(), self.life_dest[1])
         self.rocket_dest = (self.image.get_width() * 19 / 20 - self.rocket_text.get_width(),
